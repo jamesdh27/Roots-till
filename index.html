@@ -1,0 +1,2953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roots Rum Shack - Premium Insight Engine</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #08090b;
+            --card-dark: rgba(18, 22, 28, 0.7);
+            --card-hover: rgba(26, 32, 40, 0.85);
+            --sidebar-dark: #040506;
+            --text-light: #f5f6f8;
+            --text-muted: #8892b0;
+            --sunset-orange: #ff5e36;
+            --sunset-glow: rgba(255, 94, 54, 0.15);
+            --palm-green: #00ff87;
+            --palm-glow: rgba(0, 255, 135, 0.15);
+            --ocean-blue: #00d4ff;
+            --ocean-glow: rgba(0, 212, 255, 0.15);
+            --error-red: #ff3366;
+            --font-main: 'Outfit', sans-serif;
+            --font-tech: 'Space Grotesk', sans-serif;
+            --border-glow: rgba(255, 255, 255, 0.04);
+            --border-hover: rgba(255, 94, 54, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 94, 54, 0.03) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login Overlay */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0e1117 0%, #040506 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-card {
+            background: rgba(18, 22, 28, 0.6);
+            padding: 50px 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 94, 54, 0.25);
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 94, 54, 0.1);
+            max-width: 420px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .login-card h2 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #ff5e36 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 20px;
+            font-family: var(--font-tech);
+            letter-spacing: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: var(--sunset-orange);
+            box-shadow: 0 0 15px rgba(255, 94, 54, 0.2);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .login-card button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff7e40 0%, #ff4500 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .login-card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.5), 0 0 15px rgba(255, 94, 54, 0.2);
+        }
+
+        .login-card button:active {
+            transform: translateY(0);
+        }
+
+        /* Dashboard Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .sidebar {
+            background-color: var(--sidebar-dark);
+            padding: 35px 25px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
+            z-index: 100;
+        }
+
+        .brand h1 {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ff9e7d 0%, #ff5e36 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand span {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .menu {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid transparent;
+        }
+
+        .menu a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.02);
+            padding-left: 22px;
+        }
+
+        .menu a.active {
+            background: linear-gradient(135deg, rgba(255, 94, 54, 0.12) 0%, rgba(255, 94, 54, 0.03) 100%);
+            border: 1px solid rgba(255, 94, 54, 0.2);
+            color: var(--sunset-orange);
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding-left: 22px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-tech);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .main-content {
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-left h2 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .shack-location {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Sync Button and Pill */
+        .btn-sync {
+            background: linear-gradient(135deg, rgba(255, 94, 54, 0.15) 0%, rgba(255, 94, 54, 0.05) 100%);
+            border: 1px solid rgba(255, 94, 54, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-sync:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ff7e40 0%, #ff4500 100%);
+            border-color: var(--sunset-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.3);
+        }
+
+        .btn-sync:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-sync:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sync-status-pill {
+            font-family: var(--font-tech);
+            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .sync-status-pill.success {
+            background: rgba(0, 255, 135, 0.06);
+            color: var(--palm-green);
+            border-color: rgba(0, 255, 135, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 135, 0.03);
+        }
+
+        .sync-status-pill.error {
+            background: rgba(255, 51, 102, 0.06);
+            color: var(--error-red);
+            border-color: rgba(255, 51, 102, 0.2);
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.03);
+        }
+
+        /* Controls Filter Bar */
+        .controls-bar {
+            background: var(--card-dark);
+            padding: 20px 25px;
+            border-radius: 16px;
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(12px);
+        }
+
+        .presets-toolbar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--sunset-orange);
+            color: white;
+            background: rgba(255, 94, 54, 0.05);
+        }
+
+        .preset-btn.active {
+            background: linear-gradient(135deg, #ff7e40 0%, #ff4500 100%);
+            border-color: var(--sunset-orange);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.25);
+        }
+
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-selector {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: var(--font-tech);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .date-selector:focus {
+            border-color: var(--sunset-orange);
+            box-shadow: 0 0 10px rgba(255, 94, 54, 0.15);
+        }
+
+        .date-sep {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .compare-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-muted);
+            user-select: none;
+            font-weight: 600;
+        }
+
+        .compare-toggle-container input {
+            accent-color: var(--sunset-orange);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .kpi-card {
+            background: var(--card-dark);
+            padding: 25px 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--text-muted);
+            opacity: 0.4;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            background: var(--card-hover);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .kpi-card.orange-glow::before {
+            background: linear-gradient(90deg, #ff7e40, #ff4500);
+            opacity: 1;
+        }
+        .kpi-card.green-glow::before {
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            opacity: 1;
+        }
+        .kpi-card.blue-glow::before {
+            background: linear-gradient(90deg, #00d4ff, #0077b6);
+            opacity: 1;
+        }
+
+        .kpi-card.orange-glow:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 94, 54, 0.08);
+            border-color: var(--border-hover);
+        }
+        .kpi-card.green-glow:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 25px rgba(0, 255, 135, 0.08);
+            border-color: rgba(0, 255, 135, 0.3);
+        }
+        .kpi-card.blue-glow:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 25px rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .kpi-card h3 {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .kpi-value-container {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-value {
+            font-size: 38px;
+            font-weight: 700;
+            font-family: var(--font-tech);
+            letter-spacing: -1px;
+        }
+
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Period Comparison Badges */
+        .comp-badge {
+            font-family: var(--font-tech);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comp-badge.up {
+            background-color: rgba(0, 255, 135, 0.1);
+            color: var(--palm-green);
+            border: 1px solid rgba(0, 255, 135, 0.2);
+        }
+
+        .comp-badge.down {
+            background-color: rgba(255, 51, 102, 0.1);
+            color: var(--error-red);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+        }
+
+        .comp-badge.flat {
+            align-items: center;
+            border-radius: 10px;
+            z-index: 10;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Extended Products Table Styles */
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .select-input {
+            background-color: var(--bg-dark);
+            border: 1px solid #2a2e33;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus, .select-input:focus {
+            border-color: var(--sunset-orange);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .performance-table th, .performance-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #2a2e33;
+        }
+
+        .performance-table th {
+            background-color: var(--bg-dark);
+            color: var(--sunset-orange);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .performance-table tr:hover {
+            background-color: rgba(255, 107, 53, 0.04);
+        }
+
+        .category-pill {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .revenue-cell {
+            color: var(--palm-green);
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: var(--sunset-orange);
+            border-radius: 3px;
+        }
+
+        .progress-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            min-width: 35px;
+        }
+
+        /* Event Cards Layout */
+        .events-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media(min-width: 900px) {
+            .events-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .event-card {
+            background-color: var(--bg-dark);
+            border: 1px solid #2a2e33;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .event-card-highlighted {
+            border-color: var(--sunset-orange);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.15);
+        }
+
+        .event-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-date {
+            font-weight: bold;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        @keyframes alertBlink {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.97); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .alert-today {
+            background-color: var(--sunset-orange);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: alertBlink 1.2s infinite ease-in-out;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .impact-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .impact-extreme {
+            background-color: rgba(219, 4, 41, 0.15);
+            color: #e63946;
+            border: 1px solid rgba(219, 4, 41, 0.3);
+        }
+
+        .impact-high {
+            background-color: rgba(255, 107, 53, 0.15);
+            color: var(--sunset-orange);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .impact-medium {
+            background-color: rgba(0, 119, 182, 0.15);
+            color: #00b4d8;
+            border: 1px solid rgba(0, 119, 182, 0.3);
+        }
+
+        .event-title {
+            font-size: 18px;
+            color: var(--sunset-orange);
+            font-weight: bold;
+        }
+
+        .event-loc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .event-desc {
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--text-light);
+        }
+
+        .event-advice {
+            margin-top: 10px;
+            background-color: var(--card-dark);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            border-left: 3px solid var(--sunset-orange);
+            line-height: 1.4;
+        }
+
+        /* Event Banner Alert */
+        .event-banner {
+            background: linear-gradient(90deg, rgba(255, 107, 53, 0.15) 0%, rgba(26, 29, 32, 0) 100%);
+            border: 1px solid var(--sunset-orange);
+            border-left-width: 6px;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+
+        .event-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .event-banner-icon {
+            font-size: 24px;
+        }
+
+        .event-banner-text {
+            flex-grow: 1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .event-banner-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .event-banner-close:hover {
+            color: white;
+        }
+
+        /* Weather Advice Section */
+        .weather-advice-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .advice-icon {
+            font-size: 32px;
+        }
+
+        .advice-list {
+            margin-top: 15px;
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .rain-warning-box {
+            margin-top: 20px;
+            background-color: rgba(0, 119, 182, 0.1);
+            border-left: 4px solid var(--ocean-blue);
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .split-stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            gap: 15px;
+        }
+
+        .split-segment {
+            text-align: center;
+        }
+
+        .split-label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .split-value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .split-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .split-visual-bar {
+            display: flex;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #121416;
+            margin-top: 15px;
+        }
+
+        .split-bar-drinks {
+            background-color: var(--sunset-orange);
+            height: 100%;
+        }
+
+        .split-bar-food {
+            background-color: var(--palm-green);
+            height: 100%;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        /* Mobile & Tablet Responsiveness */
+        @media(max-width: 1024px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile Hamburger & Overlay */
+        .hamburger-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-btn:hover {
+            border-color: var(--sunset-orange);
+            background: rgba(255, 94, 54, 0.1);
+            color: white;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(4, 5, 6, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media(max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 1000;
+                transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                border-right: 1px solid rgba(255, 94, 54, 0.15);
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .hamburger-btn {
+                display: block;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .top-header {
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px 20px;
+                gap: 15px;
+            }
+
+            .presets-toolbar {
+                justify-content: flex-start;
+                gap: 5px;
+            }
+
+            .preset-btn {
+                flex-grow: 1;
+                text-align: center;
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+
+            .date-filter-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .date-selector {
+                flex-grow: 1;
+                text-align: center;
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+
+            .compare-toggle-container {
+                justify-content: center;
+                margin-top: 5px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .kpi-card {
+                padding: 20px;
+            }
+
+            .kpi-value {
+                font-size: 32px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay" class="login-container">
+        <div class="login-card">
+            <h2>🌴 Roots Insight Login 🌴</h2>
+            <p>Enter pass-pin to view live shack performance</p>
+            <input type="password" id="pin-input" placeholder="Enter PIN">
+            <button onclick="checkLogin()">Unlock Dashboard</button>
+            <p id="login-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
+    <div id="dashboard-wrapper" class="dashboard-layout hidden">
+        
+        <aside class="sidebar">
+            <div class="brand">
+                <h1>ROOTS</h1>
+                <span>Rum Shack & Kitchen</span>
+            </div>
+            <nav class="menu">
+                <a href="#" class="menu-item active" id="menu-daily-takings" onclick="switchTab('daily-takings')">📊 Daily Takings</a>
+                <a href="#" class="menu-item" id="menu-product-performance" onclick="switchTab('product-performance')">🍗 Product Performance</a>
+                <a href="#" class="menu-item" id="menu-weather-trends" onclick="switchTab('weather-trends')">🌤️ Weather & Trends</a>
+                <a href="#" class="menu-item" id="menu-local-events" onclick="switchTab('local-events')">📅 Hull Local Events</a>
+                <a href="#" class="menu-item" id="menu-competitor-watch" onclick="switchTab('competitor-watch')">⚔️ Competitor Watch</a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Data updates hourly</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="hamburger-btn" onclick="toggleSidebar(true)">☰</button>
+                    <h2>Roots Rum Shack</h2>
+                </div>
+                <div class="header-controls">
+                    <button id="sync-btn" class="btn-sync" onclick="handleSync()">
+                        <span id="sync-icon">🔄</span> <span id="sync-text">Sync Till Data</span>
+                    </button>
+                    <div id="sync-status" class="sync-status-pill loading-pulse">Initializing...</div>
+                    <div class="shack-location">Newland Ave, Hull 📍</div>
+                </div>
+            </header>
+
+            <!-- DATE PRESETS & RANGE SELECTORS FILTER BAR -->
+            <section class="controls-bar">
+                <div class="presets-toolbar">
+                    <button class="preset-btn active" id="preset-today" onclick="applyPreset('today')">Today</button>
+                    <button class="preset-btn" id="preset-yesterday" onclick="applyPreset('yesterday')">Yesterday</button>
+                    <button class="preset-btn" id="preset-7d" onclick="applyPreset('7d')">Last 7 Days</button>
+                    <button class="preset-btn" id="preset-month" onclick="applyPreset('month')">This Month</button>
+                    <button class="preset-btn" id="preset-all" onclick="applyPreset('all')">All Time</button>
+                </div>
+                <div class="date-filter-container">
+                    <input type="date" id="date-start" class="date-selector" onchange="onCustomDateChange()">
+                    <span class="date-sep">to</span>
+                    <input type="date" id="date-end" class="date-selector" onchange="onCustomDateChange()">
+                </div>
+                <label class="compare-toggle-container">
+                    <input type="checkbox" id="compare-toggle" onchange="processAndRender()">
+                    <span class="compare-label">Compare to Previous Period</span>
+                </label>
+            </section>
+
+            <!-- TODAY'S EVENT BANNER -->
+            <div id="dashboard-event-alert" class="event-banner hidden">
+                <div class="event-banner-content">
+                    <span class="event-banner-icon">📢</span>
+                    <div class="event-banner-text">
+                        <strong>Event Today:</strong> <span id="banner-event-name">Newland Avenue Street Festival</span> at <span id="banner-event-loc">Newland Ave</span>. Expect <strong><span id="banner-event-impact" class="impact-badge">Extreme Impact</span></strong> on foot traffic.
+                    </div>
+                    <button class="event-banner-close" onclick="document.getElementById('dashboard-event-alert').classList.add('hidden')">×</button>
+                </div>
+            </div>
+
+            <!-- TAB 1: DAILY TAKINGS -->
+            <div id="tab-daily-takings" class="tab-content">
+                <!-- Offline Fallback Alert -->
+                <div id="offline-alert" class="offline-alert-container hidden">
+                    <div class="offline-alert-text">
+                        <h4>⚠️ Live Till Data Fetch Blocked</h4>
+                        <p>This is usually caused by browser CORS security when opening local files directly. You can load sample data to test all dashboard features.</p>
+                    </div>
+                    <button class="offline-alert-btn" onclick="loadSampleDataFallback()">Load Sample Data</button>
+                </div>
+
+                <section class="kpi-grid">
+                    <div class="kpi-card orange-glow">
+                        <h3>Revenue</h3>
+                        <div class="kpi-value-container">
+                            <div class="kpi-value" id="today-revenue">£0.00</div>
+                            <span id="compare-revenue-badge" class="comp-badge hidden"></span>
+                        </div>
+                        <div class="kpi-sub-container" style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                            <span class="kpi-sub" id="sales-count">0 sales logged</span>
+                            <span id="compare-sales-badge" class="comp-badge hidden" style="font-size: 11px; padding: 2px 5px;"></span>
+                        </div>
+                    </div>
+                    <div class="kpi-card green-glow">
+                        <h3>Top Category</h3>
+                        <div class="kpi-value" id="top-category">-</div>
+                        <span class="kpi-sub">By transaction volume</span>
+                    </div>
+                    <div class="kpi-card blue-glow">
+                        <h3>Hull Weather Context</h3>
+                        <div class="kpi-value" id="hull-temp">--°C</div>
+                        <span class="kpi-sub" id="hull-cond">Loading sky...</span>
+                    </div>
+                </section>
+
+                <section class="analytics-grid">
+                    <div class="chart-container large-card chart-container-relative">
+                        <h3>Hourly Peak Times & Revenue Slicing</h3>
+                        <div style="position: relative; height:300px; width:100%;">
+                            <canvas id="peakTimesChart"></canvas>
+                        </div>
+                        <div id="chart-empty-overlay" class="empty-state-overlay hidden">
+                            <div class="empty-state-icon">📭</div>
+                            <h4>No Transactions Recorded</h4>
+                            <p>No sales or voids were logged in this date range.</p>
+                        </div>
+                    </div>
+
+                    <div class="data-card small-card" style="position: relative;">
+                        <h3>Menu Items Review</h3>
+                        <div class="tabs">
+                            <button class="tab-btn active" id="btn-product-top" onclick="switchProductTab('top')">Top Sellers</button>
+                            <button class="tab-btn" id="btn-product-low" onclick="switchProductTab('low')">Underperforming</button>
+                        </div>
+                        <ul id="product-list" class="product-ranking-list">
+                            <li>Loading sheet analysis...</li>
+                        </ul>
+                        <div id="product-empty-overlay" class="empty-state-overlay hidden">
+                            <div class="empty-state-icon">📭</div>
+                            <h4>No Data</h4>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB 2: PRODUCT PERFORMANCE -->
+            <div id="tab-product-performance" class="tab-content hidden">
+                <div class="large-card">
+                    <div class="card-header-flex">
+                        <h3>Product Performance Matrix</h3>
+                        <div class="filter-controls">
+                            <input type="text" id="product-search" placeholder="Search product..." class="search-input" oninput="renderExtendedProductTab()">
+                            <select id="product-category-filter" class="select-input" onchange="renderExtendedProductTab()">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="performance-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Quantity Sold</th>
+                                    <th>Total Revenue</th>
+                                    <th>Slicing (% of Sales)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="extended-product-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-muted);">Loading details...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: WEATHER & TRENDS -->
+            <div id="tab-weather-trends" class="tab-content hidden">
+                <div class="analytics-grid" style="margin-bottom: 20px;">
+                    <div id="weather-advice-card" class="large-card">
+                        <div class="weather-advice-header">
+                            <span class="advice-icon">🌤️</span>
+                            <h3>Weather-Correlated Insights</h3>
+                        </div>
+                        <p>Select a date range to view weather-based operational advice.</p>
+                    </div>
+                    <div id="weather-sales-split" class="small-card">
+                        <h3>Sales Slicing (Food vs. Drinks)</h3>
+                        <p style="color: var(--text-muted); margin-top: 15px;">Awaiting sales metrics...</p>
+                    </div>
+                </div>
+                
+                <div class="large-card" id="till-intelligence-card" style="margin-top: 20px;">
+                    <div class="weather-advice-header">
+                        <span class="advice-icon">💡</span>
+                        <h3>Till Intelligence & Actionable Insights</h3>
+                    </div>
+                    <div id="till-intelligence-body">
+                        <p style="color: var(--text-muted);">Enable comparisons to calculate analytics recommendations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: LOCAL EVENTS -->
+            <div id="tab-local-events" class="tab-content hidden">
+                <div class="large-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3>📅 Hull Local Events Calendar</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Track sports fixtures and street festivals impacting restaurant foot traffic on Newland Ave.</p>
+                        </div>
+                    </div>
+                    <div class="events-list" id="events-list-container">
+                        <!-- Events will be dynamically injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: COMPETITOR WATCH -->
+            <div id="tab-competitor-watch" class="tab-content hidden">
+                <section class="analytics-grid">
+                    <!-- Column 1: Price Watch Matrix -->
+                    <div class="large-card">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>⚔️ Street Price Comparison Matrix</h3>
+                                <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Real-time price comparisons with Newland Ave competitor venues.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="search-bar-container" style="margin-bottom: 25px;">
+                            <input type="text" id="comp-item-search" placeholder="Search street menu items (e.g. Red Stripe, Rum Punch, Jerk Chicken...)" class="search-input" style="width: 100%; padding: 14px 20px; font-size: 15px; border-radius: 12px; background: rgba(0,0,0,0.4);" oninput="renderCompetitorComparison()">
+                        </div>
+
+                        <div id="competitor-comparison-results">
+                            <!-- Injected by JS -->
+                        </div>
+                        
+                        <!-- Price Index Gauges -->
+                        <div style="margin-top: 35px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px;">
+                            <h3 style="font-size: 16px; margin-bottom: 15px;">📊 Street Price Category Index (CPI)</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Roots price average relative to local street benchmark (100% represents exact street average).</p>
+                            <div id="category-index-gauges" style="display: flex; flex-direction: column; gap: 15px;">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Margin Optimizer & Local Offers -->
+                    <div class="small-card" style="display: flex; flex-direction: column; gap: 25px;">
+                        <div>
+                            <h3 style="margin-bottom: 15px;">💡 Margin Optimizer Recommendations</h3>
+                            <div id="pricing-recommendations" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="margin-bottom: 15px;">📢 Active Competitor Offers Feed</h3>
+                            <div id="competitor-offers-list" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Error Boundary Alert Box -->
+    <div id="error-boundary" class="hidden" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 800px; background: #d90429; color: white; padding: 20px; font-weight: bold; border: 2px solid white; z-index: 100000; border-radius: 8px; font-family: monospace; box-shadow: 0 10px 30px rgba(0,0,0,0.5); white-space: pre-wrap;">
+        <h3>🚨 Unhandled JavaScript Error</h3>
+        <pre id="error-boundary-msg" style="margin-top: 10px; font-size: 13px; font-family: monospace; color: white;"></pre>
+    </div>
+
+    <!-- Visible debug overlay for headless execution and diagnostics -->
+    <div id="debug-overlay" class="hidden" style="position: fixed; bottom: 0; right: 0; background: rgba(0,0,0,0.9); color: #ff6b35; font-family: monospace; font-size: 11px; z-index: 99999; padding: 8px; border-left: 2px solid var(--sunset-orange); border-top: 2px solid var(--sunset-orange);">
+        Search: <span id="debug-search" style="color: white;"></span> | Action: <span id="debug-action" style="color: white;"></span> | Rows: <span id="debug-rows" style="color: white;">0</span>
+    </div>
+
+    <script>
+        // Global Error Catching for Error Boundary UI
+        window.onerror = function(message, source, lineno, colno, error) {
+            const boundary = document.getElementById('error-boundary');
+            const boundaryMsg = document.getElementById('error-boundary-msg');
+            if (boundary && boundaryMsg) {
+                boundary.classList.remove('hidden');
+                boundaryMsg.textContent = `${message}\nat ${source}:${lineno}:${colno}\n\nStack:\n${error ? error.stack : 'N/A'}`;
+            }
+            return false;
+        };
+        window.onunhandledrejection = function(event) {
+            const boundary = document.getElementById('error-boundary');
+            const boundaryMsg = document.getElementById('error-boundary-msg');
+            if (boundary && boundaryMsg) {
+                boundary.classList.remove('hidden');
+                boundaryMsg.textContent = `Unhandled Promise Rejection: ${event.reason}\n\nStack:\n${event.reason ? event.reason.stack : 'N/A'}`;
+            }
+        };
+
+        // ==========================================
+        // CONFIGURATION, STATE & DATASETS
+        // ==========================================
+        const DASHBOARD_PIN = "7866";
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSntl3rIlimUrEI6rPybWhuAlWfghicgkovf1GgcgaeGbwaSDYPr0zMATu-4AKoBE9RMqE4whk8L4cy/pub?gid=0&single=true&output=csv";
+
+        let salesData = [];
+        let productMetrics = {};
+        let currentProductTab = 'top';
+        let peakChart = null;
+
+        // Hull Local Events Dataset
+        const HULL_EVENTS = [
+            {
+                date: "2026-06-14",
+                name: "Newland Avenue Street Festival",
+                location: "Newland Ave (Right outside!)",
+                impact: "Extreme",
+                time: "12:00 - 22:00",
+                description: "Hull's annual Newland Ave street festival with live music, street food, and craft markets. High-density foot traffic is expected right outside Roots Rum Shack.",
+                advice: "Prep: Schedule double staff on floor and bar. Pre-batch Rum Punch and stock up on Red Stripe and Cruz Campo kegs."
+            },
+            {
+                date: "2026-06-16",
+                name: "Hull KR vs St Helens Super League",
+                location: "Sewell Group Craven Park",
+                impact: "High",
+                time: "19:45 Kickoff",
+                description: "Major mid-week Super League clash. Large crowds will travel along Cottingham Road and Newland Ave pre- and post-match.",
+                advice: "Prep: Anticipate post-match dinner rushes. Ensure kitchen stays open late for takeaway/dine-in orders."
+            },
+            {
+                date: "2026-06-20",
+                name: "Hull FC vs Wigan Warriors Super League",
+                location: "MKM Stadium",
+                impact: "High",
+                time: "15:00 Kickoff",
+                description: "Saturday afternoon game. Supporters will gather at local pubs on Princes and Newland Ave for pre-match drinks.",
+                advice: "Prep: Staff up for early afternoon bar drinks. Promote match-day food platters and beer buckets."
+            },
+            {
+                date: "2026-06-27",
+                name: "Humber Street Sesh 2026",
+                location: "Humber Street / Fruit Market",
+                impact: "Extreme",
+                time: "11:00 - 23:00",
+                description: "Hull's largest music festival showcasing local bands. Draws over 30,000 music fans to the city center and Fruit Market area.",
+                advice: "Prep: Expect city-wide dining surges. Offer festival-themed drinks and fast takeout options."
+            },
+            {
+                date: "2026-07-04",
+                name: "Pride in Hull 2026",
+                location: "Queens Gardens & City Centre",
+                impact: "High",
+                time: "12:00 - 20:00",
+                description: "Annual city-wide celebration starting with a massive parade and transitioning to live stages in the city centre. High foot-fall in surrounding restaurant corridors.",
+                advice: "Prep: Decorate the shack, play upbeat reggae and calypso music, and offer rainbow-themed cocktail specials."
+            },
+            {
+                date: "2026-10-09",
+                name: "Hull Fair 2026",
+                location: "Walton Street Showground",
+                impact: "Extreme",
+                time: "14:00 - 23:00 daily",
+                description: "One of Europe's largest travelling funfairs. Draws hundreds of thousands of people to Hull over 8 days, causing major city-wide traffic and massive food-run surges.",
+                advice: "Prep: Walton Street is close to Newland Ave. Massive evening surges are expected for post-fair food. Ensure plenty of Jerk Chicken is prepped."
+            }
+        ];
+
+        // Competitor menu items comparison dataset
+        const COMPETITOR_MENUS = [
+            { name: "Reggae Rum Punch", category: "Cocktails", roots: 9.75, larkins: 8.50, piper: 8.00, boardwalk: 9.50, xanadu: 10.75 },
+            { name: "Flamin Zombie", category: "Cocktails", roots: 10.00, larkins: 9.00, piper: 8.50, boardwalk: 10.00, xanadu: 11.50 },
+            { name: "Pina Colada", category: "Cocktails", roots: 9.75, larkins: 8.50, piper: 8.00, boardwalk: 9.50, xanadu: 10.25 },
+            { name: "Red Stripe Pint", category: "Draught Beer", roots: 6.50, larkins: 5.20, piper: 5.00, boardwalk: 5.80, xanadu: 6.20 },
+            { name: "Cruz Campo Pint", category: "Draught Beer", roots: 5.50, larkins: 4.80, piper: 4.50, boardwalk: 5.20, xanadu: 5.60 },
+            { name: "Corona Bottle", category: "Bottles", roots: 5.00, larkins: 4.20, piper: 4.00, boardwalk: 4.80, xanadu: 5.00 },
+            { name: "Trinidadian Jerk Chicken", category: "Mains", roots: 16.00, larkins: 13.50, piper: 12.00, boardwalk: 15.00, xanadu: null },
+            { name: "Mo Bay Chicken Curry", category: "Mains", roots: 17.00, larkins: 14.50, piper: 13.00, boardwalk: 15.50, xanadu: null },
+            { name: "Mac & Cheese Balls", category: "Lite Bites", roots: 8.00, larkins: 6.50, piper: 5.50, boardwalk: 7.50, xanadu: 8.50 },
+            { name: "Belly Pork Bites", category: "Lite Bites", roots: 8.00, larkins: 7.00, piper: 6.00, boardwalk: 7.50, xanadu: 9.00 },
+            { name: "Roots Diet Coke", category: "Soft Drinks", roots: 3.50, larkins: 3.00, piper: 2.80, boardwalk: 3.20, xanadu: 3.80 }
+        ];
+
+        // Competitor active street offers feed
+        const COMPETITOR_OFFERS = [
+            {
+                venue: "The Larkins",
+                offer: "2-for-1 Cocktails (Sun to Thu, 5pm - 8pm)",
+                details: "Includes classic and house cocktails. Highly popular with students from local houses.",
+                threat: "High",
+                counter: "Run a 'Pitcher Share' special (e.g. 1L Rum Punch Pitcher for £16) to encourage group sharing trade."
+            },
+            {
+                venue: "The Piper",
+                offer: "£4.00 Cruz Campo Pints on Rugby Match Days",
+                details: "Runs during all Hull FC & Hull KR televised and local stadium match sessions.",
+                threat: "High",
+                counter: "Offer a 'Burger & Pint' bundle for £18 during game windows to pull dining footfall."
+            },
+            {
+                venue: "Boardwalk",
+                offer: "Student 20% Discount (Every Mon and Tue)",
+                details: "Applicable on all craft beer cans and street food mains. Requires valid student ID card.",
+                threat: "Medium",
+                counter: "Promote a 'Roots Mid-Week Jerk Platter' deal with a complimentary soft drink for students."
+            },
+            {
+                venue: "Xanadu Lounge",
+                offer: "Happy Hour £6.50 Mojitos & Martinis (Daily 4pm - 7pm)",
+                details: "Upscale cocktail crowd target. Overlaps with early evening after-work drinks.",
+                threat: "Medium",
+                counter: "Highlight Roots' premium signature Jamaican rums and play smooth reggae vibes during pre-dinner slots."
+            }
+        ];
+
+        // ==========================================
+        // 1. LOGIN OVERLAY MECHANICS
+        // ==========================================
+        function checkLogin() {
+            const pinInput = document.getElementById('pin-input').value;
+            const errorMsg = document.getElementById('login-error');
+            
+            if (pinInput === DASHBOARD_PIN) {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('dashboard-wrapper').classList.remove('hidden');
+                initDashboard();
+            } else {
+                errorMsg.textContent = "❌ Invalid PIN. Try again.";
+            }
+        }
+
+        // Enter Key Support for Login
+        document.getElementById('pin-input')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkLogin();
+        });
+
+        // Auto-login via query parameter for testing/headless execution
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Populate debug fields dynamically if in test mode
+            if (urlParams.get('test_action')) {
+                const debugOverlay = document.getElementById('debug-overlay');
+                if (debugOverlay) debugOverlay.classList.remove('hidden');
+                const debugSearch = document.getElementById('debug-search');
+                const debugAction = document.getElementById('debug-action');
+                if (debugSearch) debugSearch.textContent = window.location.search;
+                if (debugAction) debugAction.textContent = urlParams.get('test_action');
+            }
+            
+            if (urlParams.get('bypass') === DASHBOARD_PIN) {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('dashboard-wrapper').classList.remove('hidden');
+                initDashboard();
+            }
+        };
+
+        // ==========================================
+        // 2. DASHBOARD NAVIGATION & LAYOUT CONTROLS
+        // ==========================================
+        function toggleSidebar(state) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (state === undefined) {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            } else if (state) {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            } else {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        }
+
+        function switchTab(tabId) {
+            // Hide all tab containers
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Show selected tab container
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            // Update menu sidebar highlighting
+            document.querySelectorAll('.menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.getElementById(`menu-${tabId}`);
+            if (activeLink) activeLink.classList.add('active');
+            
+            // Close sidebar on mobile drawer after clicking
+            toggleSidebar(false);
+        }
+
+        // ==========================================
+        // 3. INITIALIZATION & SYNC PIPELINES
+        // ==========================================
+        async function initDashboard() {
+            fetchLiveHullWeather();
+
+            const syncStatus = document.getElementById('sync-status');
+            const offlineAlert = document.getElementById('offline-alert');
+            const debugOverlay = document.getElementById('debug-overlay');
+            const debugRows = document.getElementById('debug-rows');
+
+            try {
+                const response = await fetch(`${SHEET_CSV_URL}&t=${Date.now()}`);
+                const csvText = await response.text();
+                parseCSV(csvText);
+                
+                // Hide offline alert on success
+                if (offlineAlert) offlineAlert.classList.add('hidden');
+                
+                // Update status pill
+                if (syncStatus) {
+                    syncStatus.className = 'sync-status-pill success';
+                    syncStatus.innerHTML = `🟢 Live Data Loaded (${salesData.length.toLocaleString()} rows)`;
+                }
+                
+                // Update debug rows
+                if (debugRows) debugRows.textContent = salesData.length;
+                if (debugOverlay && new URLSearchParams(window.location.search).get('test_action')) {
+                    debugOverlay.classList.remove('hidden');
+                }
+
+                // Auto-set date picker to the latest date available in the dataset (June 14, 2026)
+                const latestDate = getLatestTransactionDate();
+                document.getElementById('date-start').value = latestDate;
+                document.getElementById('date-end').value = latestDate;
+                
+                // Apply test actions synchronously if query parameter exists
+                const urlParams = new URLSearchParams(window.location.search);
+                const action = urlParams.get('test_action');
+                if (action) {
+                    if (action === 'click_low') {
+                        currentProductTab = 'low';
+                        const btnTop = document.getElementById('btn-product-top');
+                        const btnLow = document.getElementById('btn-product-low');
+                        if (btnTop && btnLow) {
+                            btnTop.classList.remove('active');
+                            btnLow.classList.add('active');
+                        }
+                    } else if (action === 'show_products') {
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                        const tabProd = document.getElementById('tab-product-performance');
+                        if (tabProd) tabProd.classList.remove('hidden');
+                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
+                        const linkProd = document.getElementById('menu-product-performance');
+                        if (linkProd) linkProd.classList.add('active');
+                    } else if (action === 'show_weather') {
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                        const tabWeather = document.getElementById('tab-weather-trends');
+                        if (tabWeather) tabWeather.classList.remove('hidden');
+                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
+                        const linkWeather = document.getElementById('menu-weather-trends');
+                        if (linkWeather) linkWeather.classList.add('active');
+                    } else if (action === 'show_events') {
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                        const tabEvents = document.getElementById('tab-local-events');
+                        if (tabEvents) tabEvents.classList.remove('hidden');
+                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
+                        const linkEvents = document.getElementById('menu-local-events');
+                        if (linkEvents) linkEvents.classList.add('active');
+                    } else if (action === 'show_competitors') {
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                        const tabComp = document.getElementById('tab-competitor-watch');
+                        if (tabComp) tabComp.classList.remove('hidden');
+                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
+                        const linkComp = document.getElementById('menu-competitor-watch');
+                        if (linkComp) linkComp.classList.add('active');
+                    } else if (action === 'open_drawer') {
+                        toggleSidebar(true);
+                    } else if (action === 'test_no_data') {
+                        document.getElementById('date-start').value = '2026-06-15';
+                        document.getElementById('date-end').value = '2026-06-15';
+                    } else if (action === 'test_range_7d') {
+                        applyPreset('7d');
+                        return; // applyPreset will run processAndRender
+                    } else if (action === 'test_compare_active') {
+                        document.getElementById('compare-toggle').checked = true;
+                        applyPreset('7d');
+                        return;
+                    } else if (action === 'test_compare_insights') {
+                        document.getElementById('compare-toggle').checked = true;
+                        // Switch tab to weather-trends
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                        const tabWeather = document.getElementById('tab-weather-trends');
+                        if (tabWeather) tabWeather.classList.remove('hidden');
+                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
+                        const linkWeather = document.getElementById('menu-weather-trends');
+                        if (linkWeather) linkWeather.classList.add('active');
+                        
+                        applyPreset('7d');
+                        return;
+                    }
+                }
+                
+                processAndRender();
+            } catch (error) {
+                console.error("Error loading live sheet data:", error);
+                
+                // Show offline fallback alert
+                if (offlineAlert) offlineAlert.classList.remove('hidden');
+                
+                // Update status pill to error
+                if (syncStatus) {
+                    syncStatus.className = 'sync-status-pill error';
+                    syncStatus.innerHTML = `🔴 CORS / Connection Block`;
+                }
+                
+                document.getElementById('product-list').innerHTML = "<li>⚠️ Live data load failed. Click the button above to load local sample data fallback.</li>";
+                
+                // Apply test action in catch block for testing sample data fallback
+                const urlParams = new URLSearchParams(window.location.search);
+                const action = urlParams.get('test_action');
+                if (action === 'test_load_sample' || action === 'show_competitors' || action === 'open_drawer') {
+                    loadSampleDataFallback();
+                    if (action === 'show_competitors') {
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                        const tabComp = document.getElementById('tab-competitor-watch');
+                        if (tabComp) tabComp.classList.remove('hidden');
+                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
+                        const linkComp = document.getElementById('menu-competitor-watch');
+                        if (linkComp) linkComp.classList.add('active');
+                    } else if (action === 'open_drawer') {
+                        toggleSidebar(true);
+                    }
+                    return;
+                }
+                
+                processAndRender();
+            }
+        }
+
+        async function handleSync() {
+            const syncBtn = document.getElementById('sync-btn');
+            const syncIcon = document.getElementById('sync-icon');
+            const syncText = document.getElementById('sync-text');
+            const syncStatus = document.getElementById('sync-status');
+            const offlineAlert = document.getElementById('offline-alert');
+            const debugRows = document.getElementById('debug-rows');
+            
+            // UI Loading State (Disable buttons, add spinner classes)
+            syncBtn.disabled = true;
+            syncIcon.classList.add('spinning-icon');
+            syncText.textContent = "Syncing...";
+            if (syncStatus) {
+                syncStatus.className = 'sync-status-pill loading-pulse';
+                syncStatus.innerHTML = `🔄 Syncing till...`;
+            }
+            
+            const pulseTargets = [
+                document.getElementById('today-revenue'),
+                document.getElementById('sales-count'),
+                document.getElementById('top-category'),
+                document.getElementById('hull-temp'),
+                document.getElementById('hull-cond'),
+                document.getElementById('product-list'),
+                document.getElementById('extended-product-table-body'),
+                document.getElementById('till-intelligence-body')
+            ].filter(Boolean);
+            
+            pulseTargets.forEach(el => el.classList.add('loading-pulse'));
+            
+            try {
+                const response = await fetch(`${SHEET_CSV_URL}&t=${Date.now()}`);
+                const csvText = await response.text();
+                parseCSV(csvText);
+                
+                // Hide offline alert
+                if (offlineAlert) offlineAlert.classList.add('hidden');
+                
+                // Update status pill
+                if (syncStatus) {
+                    syncStatus.className = 'sync-status-pill success';
+                    syncStatus.innerHTML = `🟢 Live Data Loaded (${salesData.length.toLocaleString()} rows)`;
+                }
+                
+                // Update debug rows
+                if (debugRows) debugRows.textContent = salesData.length;
+                
+                // Refresh weather too
+                await fetchLiveHullWeather();
+                
+                // Render
+                processAndRender();
+            } catch (error) {
+                console.error("Sync failed:", error);
+                
+                // Show offline alert
+                if (offlineAlert) offlineAlert.classList.remove('hidden');
+                
+                // Update status pill
+                if (syncStatus) {
+                    syncStatus.className = 'sync-status-pill error';
+                    syncStatus.innerHTML = `🔴 Sync Failed (CORS)`;
+                }
+                
+                alert("⚠️ Sync failed. This is typically due to local browser CORS security blocking access to the Google Sheet URL. Click 'Load Sample Data' in the alert box below to load mock transactions.");
+            } finally {
+                // Remove UI Loading State
+                syncBtn.disabled = false;
+                syncIcon.classList.remove('spinning-icon');
+                syncText.textContent = "Sync Till Data";
+                pulseTargets.forEach(el => el.classList.remove('loading-pulse'));
+            }
+        }
+
+        // Helper: Scrape dataset to find newest YYYY-MM-DD
+        function getLatestTransactionDate() {
+            if (salesData.length === 0) return "2026-06-14";
+            let maxDateStr = "";
+            salesData.forEach(item => {
+                if (item.timestamp) {
+                    const d = parseDateToYYYYMMDD(item.timestamp);
+                    if (d && d.match(/^\d{4}-\d{2}-\d{2}$/) && d > maxDateStr) {
+                        maxDateStr = d;
+                    }
+                }
+            });
+            return maxDateStr || "2026-06-14";
+        }
+
+        // Fallback: Populate local sample dataset when Google Sheet fetch is blocked by CORS
+        function loadSampleDataFallback() {
+            salesData = [];
+            const products = [
+                { name: "Reggae Rum Punch", cat: "Cocktails", price: 9.75 },
+                { name: "Flamin Zombie", cat: "Cocktails", price: 10.00 },
+                { name: "Pina Colada", cat: "Cocktails", price: 9.75 },
+                { name: "Bob Marley", cat: "Cocktails", price: 9.75 },
+                { name: "Red Stripe Pint", cat: "Draught", price: 6.50 },
+                { name: "Cruz Campo Pint", cat: "Draught", price: 5.50 },
+                { name: "Corona Bottle", cat: "Bottles", price: 5.00 },
+                { name: "Roots Diet Coke", cat: "Soft Drinks", price: 3.50 },
+                { name: "Water", cat: "Soft Drinks", price: 0.00 },
+                { name: "Trinidadian Jerk Chicken", cat: "Classic Roots", price: 16.00 },
+                { name: "Mo Bay Chicken Curry", cat: "Dutch Pot", price: 17.00 },
+                { name: "Roots Mix It Up", cat: "Jerk Pit", price: 20.50 },
+                { name: "Mac & Cheese Balls", cat: "Lite Bites", price: 8.00 },
+                { name: "Belly Pork Bites", cat: "Lite Bites", price: 8.00 },
+                { name: "House Fries", cat: "Fixins", price: 4.25 }
+            ];
+            
+            // Generate transactions for June 1 to June 14, 2026
+            const start = new Date(2026, 5, 1);
+            const end = new Date(2026, 5, 14);
+            
+            let current = new Date(start);
+            while (current <= end) {
+                const dateStr = formatDateYYYYMMDD(current);
+                // Generate 10-20 transactions per day
+                const txCount = Math.floor(Math.random() * 11) + 15;
+                for (let i = 0; i < txCount; i++) {
+                    const p = products[Math.floor(Math.random() * products.length)];
+                    const hour = Math.floor(Math.random() * 10) + 12; // 12:00 to 22:00
+                    const min = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+                    const sec = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+                    const isVoid = Math.random() < 0.04; // 4% voids
+                    
+                    salesData.push({
+                        timestamp: `${dateStr} ${hour}:${min}:${sec}`,
+                        productName: p.name,
+                        category: p.cat,
+                        price: p.price,
+                        type: isVoid ? "Void" : "Sale"
+                    });
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            
+            // Hide the offline alert
+            const offlineAlert = document.getElementById('offline-alert');
+            if (offlineAlert) offlineAlert.classList.add('hidden');
+            
+            // Update status pill
+            const syncStatus = document.getElementById('sync-status');
+            if (syncStatus) {
+                syncStatus.className = 'sync-status-pill success';
+                syncStatus.innerHTML = `🟢 Loaded Offline Sample (${salesData.length.toLocaleString()} rows)`;
+            }
+
+            // Update debug rows
+            const debugRows = document.getElementById('debug-rows');
+            if (debugRows) debugRows.textContent = salesData.length;
+            
+            // Set date inputs to cover the range
+            document.getElementById('date-start').value = "2026-06-01";
+            document.getElementById('date-end').value = "2026-06-14";
+            
+            processAndRender();
+        }
+
+        // System Today String in YYYY-MM-DD
+        function getSystemTodayStr() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // ==========================================
+        // 4. DATE RANGE PRESETS & MATHEMATICS
+        // ==========================================
+        function applyPreset(presetId) {
+            const latestDateStr = getLatestTransactionDate();
+            const latestParts = latestDateStr.split('-');
+            const latest = new Date(latestParts[0], latestParts[1] - 1, latestParts[2]);
+            
+            let startStr = "";
+            let endStr = latestDateStr;
+            
+            if (presetId === 'today') {
+                startStr = latestDateStr;
+            } else if (presetId === 'yesterday') {
+                const yesterday = new Date(latest.getTime() - 24 * 60 * 60 * 1000);
+                startStr = formatDateYYYYMMDD(yesterday);
+                endStr = startStr;
+            } else if (presetId === '7d') {
+                const start = new Date(latest.getTime() - 6 * 24 * 60 * 60 * 1000);
+                startStr = formatDateYYYYMMDD(start);
+            } else if (presetId === 'month') {
+                const year = latest.getFullYear();
+                const month = latest.getMonth();
+                const start = new Date(year, month, 1);
+                startStr = formatDateYYYYMMDD(start);
+            } else if (presetId === 'all') {
+                if (salesData.length > 0) {
+                    let minDateStr = latestDateStr;
+                    salesData.forEach(item => {
+                        if (item.timestamp) {
+                            const d = item.timestamp.split(' ')[0];
+                            if (d && d.match(/^\d{4}-\d{2}-\d{2}$/) && d < minDateStr) {
+                                minDateStr = d;
+                            }
+                        }
+                    });
+                    startStr = minDateStr;
+                } else {
+                    startStr = "2025-12-05";
+                }
+            }
+            
+            document.getElementById('date-start').value = startStr;
+            document.getElementById('date-end').value = endStr;
+            
+            // Highlight Active Preset
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`preset-${presetId}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            processAndRender();
+        }
+
+        function onCustomDateChange() {
+            // Remove active preset highlight because user manually adjusted dates
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            processAndRender();
+        }
+
+        function getPreviousPeriod(startStr, endStr) {
+            const sParts = startStr.split('-');
+            const eParts = endStr.split('-');
+            const start = new Date(sParts[0], sParts[1] - 1, sParts[2]);
+            const end = new Date(eParts[0], eParts[1] - 1, eParts[2]);
+            
+            const durationMs = end.getTime() - start.getTime();
+            
+            // Previous end is one day before current start
+            const prevEnd = new Date(start.getTime() - 24 * 60 * 60 * 1000);
+            // Previous start is prevEnd minus duration
+            const prevStart = new Date(prevEnd.getTime() - durationMs);
+            
+            return {
+                start: formatDateYYYYMMDD(prevStart),
+                end: formatDateYYYYMMDD(prevEnd)
+            };
+        }
+
+        function formatDateYYYYMMDD(date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // ==========================================
+        // 5. PARSING & PROCESSING ENGINE
+        // ==========================================
+        function parseDateToYYYYMMDD(dateStr) {
+            if (!dateStr) return "";
+            dateStr = dateStr.trim();
+            // Case 1: YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+                return dateStr.substring(0, 10);
+            }
+            // Case 2: DD/MM/YYYY
+            if (/^\d{2}\/\d{2}\/\d{4}/.test(dateStr)) {
+                const parts = dateStr.split('/');
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            // Case 3: DD-MM-YYYY
+            if (/^\d{2}-\d{2}-\d{4}/.test(dateStr)) {
+                const parts = dateStr.split('-');
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            // Fallback: standard Date parsing
+            try {
+                const d = new Date(dateStr);
+                if (!isNaN(d.getTime())) {
+                    const yyyy = d.getFullYear();
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    return `${yyyy}-${mm}-${dd}`;
+                }
+            } catch(e) {}
+            return dateStr;
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            if (lines.length <= 1) return;
+            
+            salesData = [];
+            
+            lines.slice(1).forEach(line => {
+                const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
+                const ts = cols[0]?.replace(/"/g, '');
+                if (ts && ts.match(/^\d{4}-\d{2}-\d{2}/)) {
+                    salesData.push({
+                        timestamp: ts,
+                        productName: cols[1]?.replace(/"/g, ''),
+                        category: cols[2]?.replace(/"/g, ''),
+                        price: parseFloat(cols[3]?.replace(/"/g, '')) || 0,
+                        type: cols[4]?.replace(/"/g, '')?.trim()
+                    });
+                }
+            });
+        }
+
+        function processAndRender() {
+            let startDate = document.getElementById('date-start').value;
+            let endDate = document.getElementById('date-end').value;
+            
+            // Normalize dates
+            startDate = parseDateToYYYYMMDD(startDate);
+            endDate = parseDateToYYYYMMDD(endDate);
+            
+            const compareEnabled = document.getElementById('compare-toggle').checked;
+            
+            // Filter salesData down to selected date range (inclusive)
+            const filteredSales = salesData.filter(item => {
+                if (!item.timestamp) return false;
+                const datePart = parseDateToYYYYMMDD(item.timestamp);
+                return datePart >= startDate && datePart <= endDate;
+            });
+            
+            // Fetch previous period if comparison is enabled
+            let prevSales = [];
+            let prevPeriod = null;
+            if (compareEnabled) {
+                prevPeriod = getPreviousPeriod(startDate, endDate);
+                prevSales = salesData.filter(item => {
+                    if (!item.timestamp) return false;
+                    const datePart = parseDateToYYYYMMDD(item.timestamp);
+                    return datePart >= prevPeriod.start && datePart <= prevPeriod.end;
+                });
+            }
+            
+            // Handle Empty states
+            if (filteredSales.length === 0) {
+                showEmptyStates(startDate, endDate);
+                return;
+            }
+            
+            hideEmptyStates();
+            
+            let totalRevenue = 0;
+            let totalSalesCount = 0;
+            let categoryCounts = {};
+            let hourlyRevenue = Array(24).fill(0);
+            productMetrics = {};
+
+            filteredSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+
+                totalRevenue += item.price;
+                totalSalesCount++;
+
+                if (item.category) {
+                    categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+                }
+
+                if (item.timestamp && item.timestamp.includes(' ')) {
+                    const timePart = item.timestamp.split(' ')[1];
+                    const hour = parseInt(timePart.split(':')[0]) || 0;
+                    if (hour >= 0 && hour < 24) {
+                        hourlyRevenue[hour] += item.price;
+                    }
+                }
+
+                if (item.productName) {
+                    if (!productMetrics[item.productName]) {
+                        productMetrics[item.productName] = { 
+                            name: item.productName, 
+                            qty: 0, 
+                            revenue: 0, 
+                            category: item.category || "Other" 
+                        };
+                    }
+                    productMetrics[item.productName].qty++;
+                    productMetrics[item.productName].revenue += item.price;
+                }
+            });
+
+            // Compute previous period stats for comparisons
+            let prevRevenue = 0;
+            let prevSalesCount = 0;
+            let prevHourlyRevenue = Array(24).fill(0);
+            
+            if (compareEnabled) {
+                prevSales.forEach(item => {
+                    if (item.type && item.type.toLowerCase() === 'void') return;
+                    
+                    prevRevenue += item.price;
+                    prevSalesCount++;
+                    
+                    if (item.timestamp && item.timestamp.includes(' ')) {
+                        const timePart = item.timestamp.split(' ')[1];
+                        const hour = parseInt(timePart.split(':')[0]) || 0;
+                        if (hour >= 0 && hour < 24) {
+                            prevHourlyRevenue[hour] += item.price;
+                        }
+                    }
+                });
+            }
+
+            // Update KPI Card values
+            document.getElementById('today-revenue').textContent = `£${totalRevenue.toFixed(2)}`;
+            document.getElementById('sales-count').textContent = `${totalSalesCount} sales logged`;
+
+            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+            document.getElementById('top-category').textContent = sortedCategories[0] ? sortedCategories[0][0] : '-';
+
+            // Update Comparison badges
+            if (compareEnabled) {
+                const revPctChange = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
+                const salesPctChange = prevSalesCount > 0 ? ((totalSalesCount - prevSalesCount) / prevSalesCount) * 100 : 0;
+                
+                updateCompareBadge('compare-revenue-badge', revPctChange);
+                updateCompareBadge('compare-sales-badge', salesPctChange);
+            } else {
+                updateCompareBadge('compare-revenue-badge', null);
+                updateCompareBadge('compare-sales-badge', null);
+            }
+
+            // Refresh Sub-modules
+            renderPeakTimesChart(hourlyRevenue, compareEnabled ? prevHourlyRevenue : null);
+            renderProductRanking();
+            renderExtendedProductTab();
+            renderWeatherTrendsTab(totalRevenue, categoryCounts);
+            
+            // Inject dynamic Till Intelligence Comparative Insights
+            document.getElementById('till-intelligence-body').innerHTML = generateBusinessInsights(filteredSales, prevSales, compareEnabled);
+            renderLocalEventsTab();
+            
+            // Competitor Watch Sub-module updates
+            renderCompetitorComparison();
+            renderCategoryIndexGauges();
+            generatePricingRecommendations(filteredSales);
+            renderCompetitorOffers();
+        }
+
+        function updateCompareBadge(badgeId, pctChange) {
+            const badge = document.getElementById(badgeId);
+            if (!badge) return;
+            
+            if (pctChange === null || pctChange === undefined) {
+                badge.classList.add('hidden');
+                return;
+            }
+            
+            badge.classList.remove('hidden');
+            const direction = pctChange >= 0 ? "+" : "";
+            const pctText = `${direction}${pctChange.toFixed(1)}%`;
+            
+            badge.className = 'comp-badge'; // Reset classes
+            if (pctChange > 0) {
+                badge.classList.add('up');
+                badge.innerHTML = `▲ ${pctText}`;
+            } else if (pctChange < 0) {
+                badge.classList.add('down');
+                badge.innerHTML = `▼ ${pctText}`;
+            } else {
+                badge.classList.add('flat');
+                badge.innerHTML = `■ ${pctText}`;
+            }
+        }
+
+        // Graceful UI Empty States
+        function showEmptyStates(startDate, endDate) {
+            document.getElementById('today-revenue').textContent = "£0.00";
+            document.getElementById('sales-count').textContent = "0 transactions logged";
+            document.getElementById('top-category').textContent = "-";
+            
+            updateCompareBadge('compare-revenue-badge', null);
+            updateCompareBadge('compare-sales-badge', null);
+            
+            // Clear charts and show empty overlay
+            if (peakChart) peakChart.destroy();
+            document.getElementById('chart-empty-overlay').classList.remove('hidden');
+            document.getElementById('product-empty-overlay').classList.remove('hidden');
+            
+            document.getElementById('product-list').innerHTML = `
+                <li style="justify-content: center; color: var(--text-muted);">
+                    No transactions recorded.
+                </li>
+            `;
+            
+            document.getElementById('extended-product-table-body').innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                        📭 No menu items sold in this date range.
+                    </td>
+                </tr>
+            `;
+            
+            document.getElementById('weather-advice-card').innerHTML = `
+                <div class="weather-advice-header">
+                    <span class="advice-icon">🌤️</span>
+                    <h3>No Data Available</h3>
+                </div>
+                <p>No operational recommendations are available because there is no till data for this range.</p>
+            `;
+            
+            document.getElementById('weather-sales-split').innerHTML = `
+                <h3>Sales Slicing (Food vs. Drinks)</h3>
+                <p style="color: var(--text-muted); margin-top: 15px; text-align: center;">No metrics available.</p>
+            `;
+            
+            document.getElementById('till-intelligence-body').innerHTML = `
+                <p style="color: var(--text-muted);">No sales data available to compile business intelligence reports.</p>
+            `;
+            
+            renderLocalEventsTab();
+        }
+
+        function hideEmptyStates() {
+            document.getElementById('chart-empty-overlay').classList.add('hidden');
+            document.getElementById('product-empty-overlay').classList.add('hidden');
+        }
+
+        // ==========================================
+        // 6. TILL INTELLIGENCE COMPARATIVE INSIGHTS
+        // ==========================================
+        function generateBusinessInsights(currentSales, previousSales, compareEnabled) {
+            if (!compareEnabled) {
+                return `<p style="color: var(--text-muted);">💡 Enable <strong>"Compare to Previous Period"</strong> above to generate live comparative insights, growth drivers, void reports, and operational intelligence guidelines.</p>`;
+            }
+            
+            if (!previousSales || previousSales.length === 0 || currentSales.length === 0) {
+                return `<p style="color: var(--text-muted);">⚠️ Incomplete transactional records for either the selected range or the preceding comparison period to calculate data insight vectors.</p>`;
+            }
+            
+            // Calculate current stats
+            let curRev = 0;
+            let curCount = 0;
+            let curVoids = 0;
+            let curVoidCount = 0;
+            let curCatCounts = {};
+            
+            currentSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') {
+                    curVoids += item.price;
+                    curVoidCount++;
+                    return;
+                }
+                curRev += item.price;
+                curCount++;
+                if (item.category) {
+                    curCatCounts[item.category] = (curCatCounts[item.category] || 0) + item.price;
+                }
+            });
+            
+            // Calculate previous stats
+            let prevRev = 0;
+            let prevCount = 0;
+            let prevCatCounts = {};
+            
+            previousSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+                prevRev += item.price;
+                prevCount++;
+                if (item.category) {
+                    prevCatCounts[item.category] = (prevCatCounts[item.category] || 0) + item.price;
+                }
+            });
+            
+            if (prevRev === 0) {
+                return `<p style="color: var(--text-muted);">Incomplete comparison metrics. Historical period has zero revenue recorded.</p>`;
+            }
+            
+            const revDiff = curRev - prevRev;
+            const revPct = ((revDiff / prevRev) * 100).toFixed(1);
+            const countDiff = curCount - prevCount;
+            const countPct = prevCount > 0 ? ((countDiff / prevCount) * 100).toFixed(1) : 0;
+            
+            let insights = [];
+            
+            // 1. Momentum Insight
+            const growthDir = revDiff >= 0 ? "growth" : "decline";
+            const growthColorClass = revDiff >= 0 ? "text-palm-green" : "text-error-red";
+            const growthSymbol = revDiff >= 0 ? "📈" : "📉";
+            
+            insights.push(`
+                <li>
+                    <strong>${growthSymbol} Revenue Momentum:</strong> 
+                    Your net till sales show a <span class="${growthColorClass}"><strong>${Math.abs(revPct)}% ${growthDir}</strong></span> compared to the preceding period (representing an absolute revenue shift of <strong>£${Math.abs(revDiff).toFixed(2)}</strong>). This was accompanied by a <strong>${Math.abs(countPct)}% ${countDiff >= 0 ? 'increase' : 'decrease'}</strong> in volume of sales transactions.
+                </li>
+            `);
+            
+            // 2. Category Drivers
+            let catDiffs = [];
+            const allCats = new Set([...Object.keys(curCatCounts), ...Object.keys(prevCatCounts)]);
+            allCats.forEach(cat => {
+                const cur = curCatCounts[cat] || 0;
+                const prev = prevCatCounts[cat] || 0;
+                catDiffs.push({ category: cat, diff: cur - prev, cur, prev });
+            });
+            
+            catDiffs.sort((a, b) => b.diff - a.diff);
+            const topGrowth = catDiffs[0];
+            const topDecline = catDiffs[catDiffs.length - 1];
+            
+            if (topGrowth && topGrowth.diff > 0) {
+                const growthRatio = topGrowth.prev > 0 ? ((topGrowth.diff / topGrowth.prev) * 100).toFixed(0) : 100;
+                insights.push(`
+                    <li>
+                        <strong>🍹 Primary Driver:</strong> 
+                        The largest growth sector is <span class="text-palm-green"><strong>${topGrowth.category}</strong></span>, which grew by <strong>£${topGrowth.diff.toFixed(2)}</strong> (a <strong>${growthRatio}%</strong> increase). Ensure bar/kitchen supplies are stocked to match this volume shift.
+                    </li>
+                `);
+            }
+            
+            if (topDecline && topDecline.diff < 0) {
+                insights.push(`
+                    <li>
+                        <strong>⚠️ Category Performance Drag:</strong> 
+                        Sales in <span class="text-error-red"><strong>${topDecline.category}</strong></span> dropped by <strong>£${Math.abs(topDecline.diff).toFixed(2)}</strong>. Review pricing strategy or consider marketing promotions to reverse this decline.
+                    </li>
+                `);
+            }
+            
+            // 3. Voids analysis
+            const voidPct = curRev > 0 ? ((curVoids / (curRev + curVoids)) * 100).toFixed(1) : 0;
+            if (voidPct > 3) {
+                insights.push(`
+                    <li>
+                        <strong>🚨 Void Leakage Alert:</strong> 
+                        Voids represent <span class="text-error-red"><strong>${voidPct}%</strong></span> of your gross sales (<strong>£${curVoids.toFixed(2)}</strong> across <strong>${curVoidCount}</strong> voided entries). High voids indicate ordering mistakes or kitchen bottlenecks. Review staff order-confirmation habits.
+                    </li>
+                `);
+            } else if (voidPct > 0) {
+                insights.push(`
+                    <li>
+                        <strong>🔒 Voids & Wastage:</strong> 
+                        Voids are currently under control at <strong>${voidPct}%</strong> of gross sales (<strong>£${curVoids.toFixed(2)}</strong>), which is within normal operating limits (under 3%).
+                    </li>
+                `);
+            }
+            
+            // 4. AOV analysis
+            const curAOV = curCount > 0 ? curRev / curCount : 0;
+            const prevAOV = prevCount > 0 ? prevRev / prevCount : 0;
+            const aovDiff = curAOV - prevAOV;
+            if (aovDiff > 0.50) {
+                insights.push(`
+                    <li>
+                        <strong>💸 Ticket Value (AOV):</strong> 
+                        Your average ticket size increased to <strong>£${curAOV.toFixed(2)}</strong> (up <strong>£${aovDiff.toFixed(2)}</strong>). Customers are buying higher-value items or ordering more per check. Promote premium sides to maintain this momentum.
+                    </li>
+                `);
+            } else if (aovDiff < -0.50) {
+                insights.push(`
+                    <li>
+                        <strong>🏷️ Ticket Value Shift:</strong> 
+                        Your average ticket size dropped to <strong>£${curAOV.toFixed(2)}</strong> (down <strong>£${Math.abs(aovDiff).toFixed(2)}</strong>). Try upselling starters or rum pairings to boost average check size.
+            </li>
+        `);
+    }
+    
+    return `
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 15px; font-size: 14px; line-height: 1.5;">
+            ${insights.join('')}
+        </ul>
+    `;
+}
+
+// ==========================================
+// 7. RENDER MODULES (CHARTS, TABLES & VIEWS)
+// ==========================================
+function renderPeakTimesChart(currentHourlyData, previousHourlyData) {
+    const ctx = document.getElementById('peakTimesChart').getContext('2d');
+    if (peakChart) peakChart.destroy(); 
+
+    // Create glowing neon sunset orange gradient for current sales
+    const currentGradient = ctx.createLinearGradient(0, 0, 0, 300);
+    currentGradient.addColorStop(0, 'rgba(255, 94, 54, 0.95)');
+    currentGradient.addColorStop(1, 'rgba(255, 26, 64, 0.3)');
+
+    // Create glowing neon blue/cyan gradient for comparison sales
+    const previousGradient = ctx.createLinearGradient(0, 0, 0, 300);
+    previousGradient.addColorStop(0, 'rgba(0, 212, 255, 0.9)');
+    previousGradient.addColorStop(1, 'rgba(0, 80, 192, 0.15)');
+
+    const datasets = [{
+        label: 'Selected Period (£)',
+        data: currentHourlyData,
+        backgroundColor: currentGradient,
+        borderColor: 'rgba(255, 94, 54, 0.8)',
+        borderWidth: 1,
+        borderRadius: 8,
+        order: 1
+    }];
+
+    if (previousHourlyData) {
+        datasets.push({
+            label: 'Previous Period (£)',
+            data: previousHourlyData,
+            backgroundColor: previousGradient,
+            borderColor: 'rgba(0, 212, 255, 0.6)',
+            borderWidth: 1,
+            borderRadius: 8,
+            order: 2
+        });
+    }
+
+    peakChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(255, 255, 255, 0.03)' }, 
+                    ticks: { 
+                        color: '#8892b0',
+                        font: { family: 'Space Grotesk', size: 10 }
+                    } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { 
+                        color: '#8892b0',
+                        font: { family: 'Space Grotesk', size: 10 }
+                    } 
+                }
+            },
+            plugins: { 
+                legend: { 
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        color: '#8892b0',
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { size: 12, family: 'Outfit', weight: '600' }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#12161c',
+                    titleColor: '#fff',
+                    titleFont: { family: 'Space Grotesk', weight: 'bold' },
+                    bodyColor: '#8892b0',
+                    bodyFont: { family: 'Outfit' },
+                    borderColor: 'rgba(255, 94, 54, 0.2)',
+                    borderWidth: 1,
+                    padding: 12,
+                    cornerRadius: 8
+                }
+            }
+        }
+    });
+}
+
+function switchProductTab(tabType) {
+    currentProductTab = tabType;
+    document.getElementById('btn-product-top').classList.remove('active');
+    document.getElementById('btn-product-low').classList.remove('active');
+    
+    if (tabType === 'top') {
+        document.getElementById('btn-product-top').classList.add('active');
+    } else {
+        document.getElementById('btn-product-low').classList.add('active');
+    }
+    
+    renderProductRanking();
+}
+
+function renderProductRanking() {
+    const listContainer = document.getElementById('product-list');
+    const items = Object.values(productMetrics);
+    
+    if (items.length === 0) {
+        listContainer.innerHTML = '<li>No menu items sold in this period.</li>';
+        return;
+    }
+    
+    if (currentProductTab === 'top') {
+        items.sort((a, b) => b.qty - a.qty);
+    } else {
+        items.sort((a, b) => a.qty - b.qty);
+    }
+
+    listContainer.innerHTML = items.slice(0, 5).map(item => `
+        <li>
+            <span>${item.name}</span>
+            <span class="qty">${item.qty} sold (£${item.revenue.toFixed(2)})</span>
+        </li>
+    `).join('');
+}
+
+// Extended Product Performance Tab
+function renderExtendedProductTab() {
+    const tbody = document.getElementById('extended-product-table-body');
+    const searchVal = document.getElementById('product-search').value.toLowerCase();
+    const categoryVal = document.getElementById('product-category-filter').value;
+    
+    const items = Object.values(productMetrics);
+    if (items.length === 0) return;
+    
+    const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+    items.sort((a, b) => b.revenue - a.revenue);
+    
+    const filteredItems = items.filter(item => {
+        const matchesSearch = item.name.toLowerCase().includes(searchVal);
+        const matchesCategory = categoryVal === 'all' || item.category === categoryVal;
+        return matchesSearch && matchesCategory;
+    });
+    
+    // Populate select element filter options dynamically once
+    const categorySelect = document.getElementById('product-category-filter');
+    if (categorySelect.options.length === 1) {
+        const categories = [...new Set(items.map(item => item.category))].filter(Boolean);
+        categories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            categorySelect.appendChild(opt);
+        });
+    }
+    
+    if (filteredItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px 0;">No products match search criteria.</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filteredItems.map(item => {
+        const pct = totalQty > 0 ? ((item.qty / totalQty) * 100).toFixed(1) : '0.0';
+        return `
+            <tr>
+                <td><strong>${item.name}</strong></td>
+                <td><span class="category-pill">${item.category}</span></td>
+                <td>${item.qty} sold</td>
+                <td class="revenue-cell">£${item.revenue.toFixed(2)}</td>
+                <td>
+                    <div class="progress-bar-container">
+                        <div style="background-color: var(--sunset-orange); height: 6px; border-radius: 3px; width: ${Math.min(parseFloat(pct) * 2.5, 100)}%;"></div>
+                        <span class="progress-text">${pct}%</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Weather Operations Insights Tab
+function renderWeatherTrendsTab(totalRevenue, categoryCounts) {
+    const tempVal = parseInt(document.getElementById('hull-temp').textContent) || 15;
+    const skyVal = document.getElementById('hull-cond').textContent;
+    
+    const isWarm = tempVal >= 18;
+    const isCold = tempVal <= 10;
+    const isRainy = skyVal.includes("Rain") || skyVal.includes("Drizzle");
+    
+    let adviceHTML = "";
+    let adviceTitle = "";
+    let adviceIcon = "";
+    
+    if (isWarm) {
+        adviceIcon = "☀️";
+        adviceTitle = "Warm Weather Operations Guide";
+        adviceHTML = `
+            <p>Temperatures are hitting <strong>${tempVal}°C</strong>. Warm, sunny weather on Newland Ave drives significant pedestrian patio dining and heavy drinks trade.</p>
+            <ul class="advice-list">
+                <li>🍹 <strong>Cocktails & Draught:</strong> Anticipate a 30-40% volume spike on Cocktails and pints (Red Stripe, Cruz Campo).</li>
+                <li>🧊 <strong>Operations:</strong> Ensure the ice maker is running continuously and pre-cool glasses for beer.</li>
+                <li>🌿 <strong>Stock:</strong> Double check fresh mint and lime inventory for mojitos.</li>
+            </ul>
+        `;
+    } else if (isCold) {
+        adviceIcon = "❄️";
+        adviceTitle = "Cold Weather Operations Guide";
+        adviceHTML = `
+            <p>Temperatures are down to <strong>${tempVal}°C</strong>. Chilly weather shifts consumer preferences toward hearty, warm comfort foods.</p>
+            <ul class="advice-list">
+                <li>🍛 <strong>Hearty Foods:</strong> Expect increased demand for Papa G Curry Goat, Mo Bay Curry Chicken, and hot sides.</li>
+                <li>🔥 <strong>Operations:</strong> Keep kitchen prep high for stews and curries. Ensure dining area heaters are functional.</li>
+                <li>🥃 <strong>Spirits:</strong> Prominently display warm rum-spiked options or double down on spiced rum mixers.</li>
+            </ul>
+        `;
+    } else {
+        adviceIcon = "⛅";
+        adviceTitle = "Moderate Weather Operations Guide";
+        adviceHTML = `
+            <p>Temperatures are around <strong>${tempVal}°C</strong> with stable sky conditions. Normal operations expected.</p>
+            <ul class="advice-list">
+                <li>📊 <strong>Balanced Sales:</strong> Expect a standard distribution of food and drinks volume.</li>
+                <li>🍗 <strong>Jerk Chicken:</strong> Jerk platters and wraps will drive core lunch/dinner revenues.</li>
+                <li>🗓️ <strong>Event Check:</strong> Cross-reference the Hull Local Events tab for any localized crowds today.</li>
+            </ul>
+        `;
+    }
+    
+    if (isRainy) {
+        adviceHTML += `
+            <div class="rain-warning-box">
+                <strong>🌧️ Rain Warning:</strong> Precipitation detected. Outdoor seating will be inactive. Delivery volume (UberEats/JustEat) and takeaway orders are projected to rise. Ensure packaging containers are prepped.
+            </div>
+        `;
+    }
+    
+    // Compute Food vs Drinks split for the range
+    const startDate = parseDateToYYYYMMDD(document.getElementById('date-start').value);
+    const endDate = parseDateToYYYYMMDD(document.getElementById('date-end').value);
+    let drinksRev = 0;
+    let foodRev = 0;
+    let drinksCount = 0;
+    let foodCount = 0;
+    
+    salesData.forEach(item => {
+        if (!item.timestamp) return;
+        const datePart = parseDateToYYYYMMDD(item.timestamp);
+        if (datePart < startDate || datePart > endDate) return;
+        if (item.type && item.type.toLowerCase() === 'void') return;
+        
+        const cat = item.category || "";
+        const isDrink = ["Cocktails", "Bottles", "Draught", "Soft Drinks", "Spirits", "Rum", "Wine"].includes(cat);
+        if (isDrink) {
+            drinksRev += item.price;
+            drinksCount++;
+        } else {
+            foodRev += item.price;
+            foodCount++;
+        }
+    });
+    
+    const totalVal = drinksRev + foodRev;
+    const drinksPct = totalVal > 0 ? ((drinksRev / totalVal) * 100).toFixed(0) : 0;
+    const foodPct = totalVal > 0 ? ((foodRev / totalVal) * 100).toFixed(0) : 0;
+    
+    document.getElementById('weather-advice-card').innerHTML = `
+        <div class="weather-advice-header">
+            <span class="advice-icon">${adviceIcon}</span>
+            <h3>${adviceTitle}</h3>
+        </div>
+        <div class="advice-body">${adviceHTML}</div>
+    `;
+    
+    document.getElementById('weather-sales-split').innerHTML = `
+        <h3>Sales Slicing (Food vs. Drinks)</h3>
+        <div class="split-stats-container">
+            <div class="split-segment">
+                <span class="split-label">🍹 Drinks Revenue</span>
+                <span class="split-value">£${drinksRev.toFixed(2)}</span>
+                <span class="split-sub">${drinksCount} items (${drinksPct}%)</span>
+            </div>
+            <div class="split-segment">
+                <span class="split-label">🍗 Food Revenue</span>
+                <span class="split-value">£${foodRev.toFixed(2)}</span>
+                <span class="split-sub">${foodCount} items (${foodPct}%)</span>
+            </div>
+        </div>
+        <div class="split-visual-bar">
+            <div class="split-bar-drinks" style="width: ${drinksPct}%"></div>
+            <div class="split-bar-food" style="width: ${foodPct}%"></div>
+        </div>
+    `;
+}
+
+// Local Hull Events Tab
+function renderLocalEventsTab() {
+    const listContainer = document.getElementById('events-list-container');
+    const alertBanner = document.getElementById('dashboard-event-alert');
+    const systemToday = getSystemTodayStr();
+    
+    const startDate = parseDateToYYYYMMDD(document.getElementById('date-start').value);
+    const endDate = parseDateToYYYYMMDD(document.getElementById('date-end').value);
+    
+    const rangeEvent = HULL_EVENTS.find(e => {
+        const evDate = parseDateToYYYYMMDD(e.date);
+        return evDate >= startDate && evDate <= endDate;
+    });
+    
+    if (rangeEvent) {
+        alertBanner.classList.remove('hidden');
+        document.getElementById('banner-event-name').textContent = rangeEvent.name;
+        document.getElementById('banner-event-loc').textContent = rangeEvent.location;
+        document.getElementById('banner-event-impact').textContent = `${rangeEvent.impact} Impact`;
+        
+        const impactSpan = document.getElementById('banner-event-impact');
+        impactSpan.className = 'impact-badge';
+        impactSpan.classList.add(`impact-${rangeEvent.impact.toLowerCase()}`);
+    } else {
+        alertBanner.classList.add('hidden');
+    }
+    
+    // Build the list of all events
+    listContainer.innerHTML = HULL_EVENTS.map(event => {
+        const evDate = parseDateToYYYYMMDD(event.date);
+        const isToday = evDate === systemToday;
+        const isSelectedRange = evDate >= startDate && evDate <= endDate;
+        
+        const impactClass = `impact-${event.impact.toLowerCase()}`;
+        const todayAlertTag = isToday ? `<span class="alert-today">🚨 HAPPENING TODAY</span>` : '';
+        const highlightedClass = isSelectedRange ? 'event-card-highlighted' : '';
+        
+        const dateParts = event.date.split('-');
+        const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+        const formattedDate = dateObj.toLocaleDateString('en-GB', options);
+        
+        return `
+            <div class="event-card ${highlightedClass}">
+                <div class="event-card-header">
+                    <div>
+                        <span class="event-date">${formattedDate}</span>
+                        ${todayAlertTag}
+                    </div>
+                    <span class="impact-badge ${impactClass}">${event.impact} Impact</span>
+                </div>
+                <h4 class="event-title">${event.name}</h4>
+                <p class="event-loc">📍 Location: <strong>${event.location}</strong> | ⏰ Time: <strong>${event.time}</strong></p>
+                <p class="event-desc">${event.description}</p>
+                <div class="event-advice">
+                    <strong>💡 Operations Advice:</strong> ${event.advice}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==========================================
+// 7.5 COMPETITOR INTELLIGENCE RENDER FUNCTIONS
+// ==========================================
+function renderCompetitorComparison() {
+    const container = document.getElementById('competitor-comparison-results');
+    if (!container) return;
+    
+    const searchInput = document.getElementById('comp-item-search');
+    const searchVal = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    
+    // Filter competitor products
+    const filtered = COMPETITOR_MENUS.filter(item => {
+        return item.name.toLowerCase().includes(searchVal) || item.category.toLowerCase().includes(searchVal);
+    });
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); padding: 30px 0; border: 1px dashed rgba(255,255,255,0.05); border-radius: 8px;">
+                🔍 No comparable street items match "${searchVal}". Try "Red Stripe", "Jerk", or "Punch".
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(item => {
+        // Calculate street average
+        const competitors = [item.larkins, item.piper, item.boardwalk, item.xanadu].filter(v => v !== null && v !== undefined);
+        const streetAvg = competitors.reduce((sum, v) => sum + v, 0) / competitors.length;
+        const priceDiff = item.roots - streetAvg;
+        const pctDiff = (priceDiff / streetAvg) * 100;
+        
+        let deviationHTML = "";
+        if (Math.abs(pctDiff) < 1.5) {
+            deviationHTML = `<span class="comp-badge flat" style="padding: 3px 8px; font-size:11px;">Market Parity</span>`;
+        } else if (pctDiff < 0) {
+            deviationHTML = `<span class="comp-badge up" style="padding: 3px 8px; font-size:11px;">Roots Cheaper (-${Math.abs(pctDiff).toFixed(0)}%)</span>`;
+        } else {
+            deviationHTML = `<span class="comp-badge down" style="background: rgba(255, 94, 54, 0.1); color: var(--sunset-orange); border: 1px solid rgba(255, 94, 54, 0.2); padding: 3px 8px; font-size:11px;">Premium (+${pctDiff.toFixed(0)}%)</span>`;
+        }
+        
+        return `
+            <div class="kpi-card" style="margin-bottom: 15px; border-left: 3px solid var(--sunset-orange); background: rgba(255,255,255,0.01); padding: 18px 20px; border-top: 1px solid rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4 style="font-size: 15px; font-weight: 700; color: white;">${item.name}</h4>
+                        <span class="category-pill" style="margin-top: 4px; display: inline-block;">${item.category}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-family: var(--font-tech); font-weight: 700; font-size: 18px; color: var(--palm-green);">£${item.roots.toFixed(2)}</div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Roots Price</div>
+                    </div>
+                </div>
+                
+                <!-- Venue comparison row -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px; text-align: center;">
+                    <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">Larkins</div>
+                        <div style="font-family: var(--font-tech); font-weight: 600; font-size: 12px; margin-top: 3px; color: white;">${item.larkins ? '£' + item.larkins.toFixed(2) : 'N/A'}</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">Piper</div>
+                        <div style="font-family: var(--font-tech); font-weight: 600; font-size: 12px; margin-top: 3px; color: white;">${item.piper ? '£' + item.piper.toFixed(2) : 'N/A'}</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">Boardwalk</div>
+                        <div style="font-family: var(--font-tech); font-weight: 600; font-size: 12px; margin-top: 3px; color: white;">${item.boardwalk ? '£' + item.boardwalk.toFixed(2) : 'N/A'}</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase;">Xanadu</div>
+                        <div style="font-family: var(--font-tech); font-weight: 600; font-size: 12px; margin-top: 3px; color: white;">${item.xanadu ? '£' + item.xanadu.toFixed(2) : 'N/A'}</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                    <span style="color: var(--text-muted);">Street Average benchmark: <strong style="color: white;">£${streetAvg.toFixed(2)}</strong></span>
+                    ${deviationHTML}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderCategoryIndexGauges() {
+    const gaugeContainer = document.getElementById('category-index-gauges');
+    if (!gaugeContainer) return;
+    
+    const categories = ["Cocktails", "Draught Beer", "Mains", "Lite Bites", "Soft Drinks"];
+    
+    gaugeContainer.innerHTML = categories.map(cat => {
+        const items = COMPETITOR_MENUS.filter(item => item.category === cat);
+        if (items.length === 0) return '';
+        
+        let rootsSum = 0;
+        let streetAvgSum = 0;
+        
+        items.forEach(item => {
+            rootsSum += item.roots;
+            const comps = [item.larkins, item.piper, item.boardwalk, item.xanadu].filter(v => v !== null && v !== undefined);
+            const streetAvg = comps.reduce((sum, v) => sum + v, 0) / comps.length;
+            streetAvgSum += streetAvg;
+        });
+        
+        const rootsAvg = rootsSum / items.length;
+        const streetAvg = streetAvgSum / items.length;
+        const indexVal = (rootsAvg / streetAvg) * 100;
+        
+        // Color formatting
+        let indexColor = "var(--sunset-orange)";
+        let stateText = "Premium Position";
+        if (indexVal < 98) {
+            indexColor = "var(--palm-green)";
+            stateText = "Highly Competitive";
+        } else if (indexVal <= 102) {
+            indexColor = "var(--ocean-blue)";
+            stateText = "Market Parity";
+        }
+        
+        return `
+            <div style="background: rgba(0,0,0,0.15); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02);">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
+                    <span style="font-weight: 600;">${cat} <span style="font-size: 10px; color: var(--text-muted); font-weight: normal; margin-left: 5px;">(${stateText})</span></span>
+                    <span style="font-family: var(--font-tech); font-weight: 700; color: ${indexColor};">${indexVal.toFixed(0)}%</span>
+                </div>
+                <div style="height: 6px; width: 100%; background: rgba(255,255,255,0.02); border-radius: 3px; overflow: hidden;">
+                    <div style="height: 100%; background: ${indexColor}; border-radius: 3px; width: ${Math.min(indexVal, 100)}%;"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function generatePricingRecommendations(filteredSales) {
+    const container = document.getElementById('pricing-recommendations');
+    if (!container) return;
+    
+    // Count sales per product in the selected range
+    const productSalesCounts = {};
+    filteredSales.forEach(item => {
+        if (item.type && item.type.toLowerCase() === 'void') return;
+        if (item.productName) {
+            productSalesCounts[item.productName] = (productSalesCounts[item.productName] || 0) + 1;
+        }
+    });
+    
+    let recs = [];
+    
+    COMPETITOR_MENUS.forEach(item => {
+        const comps = [item.larkins, item.piper, item.boardwalk, item.xanadu].filter(v => v !== null && v !== undefined);
+        const streetAvg = comps.reduce((sum, v) => sum + v, 0) / comps.length;
+        
+        // Roots is cheaper than street average -> recommend price hike
+        if (item.roots < streetAvg) {
+            const salesCount = productSalesCounts[item.name] || 0;
+            if (salesCount > 0) {
+                const newPrice = Math.floor(streetAvg * 10) / 10 + 0.95; // e.g. round to xx.95
+                const diff = newPrice - item.roots;
+                if (diff > 0.10) {
+                    const rangeProfit = salesCount * diff;
+                    recs.push({
+                        type: "up",
+                        item: item.name,
+                        currentPrice: item.roots,
+                        targetPrice: newPrice,
+                        streetAvg: streetAvg,
+                        sales: salesCount,
+                        profit: rangeProfit,
+                        text: `📈 <strong>Price Optimization:</strong> Raise <strong>${item.name}</strong> from £${item.roots.toFixed(2)} to £${newPrice.toFixed(2)} (Street Avg: £${streetAvg.toFixed(2)}). With <strong>${salesCount}</strong> units sold, this captures <span class="text-palm-green"><strong>+£${rangeProfit.toFixed(2)}</strong></span> extra margin.`
+                    });
+                }
+            }
+        }
+        
+        // Roots is significantly more expensive than street average -> alert premium risk
+        if (item.roots > streetAvg * 1.15) {
+            const salesCount = productSalesCounts[item.name] || 0;
+            if (salesCount > 0) {
+                recs.push({
+                    type: "warning",
+                    item: item.name,
+                    currentPrice: item.roots,
+                    streetAvg: streetAvg,
+                    sales: salesCount,
+                    text: `⚠️ <strong>Premium Risk:</strong> <strong>${item.name}</strong> is £${item.roots.toFixed(2)} (<strong>+${((item.roots - streetAvg)/streetAvg*100).toFixed(0)}%</strong> vs. Street Avg £${streetAvg.toFixed(2)}). Ensure high service standard (<strong>${salesCount} sold</strong>).`
+                });
+            }
+        }
+    });
+    
+    // Sort recommendations by profit value (descending)
+    recs.sort((a, b) => (b.profit || 0) - (a.profit || 0));
+    
+    if (recs.length === 0) {
+        container.innerHTML = `
+            <div style="background: rgba(255,255,255,0.02); padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); font-size: 13px; color: var(--text-muted);">
+                💡 Roots prices align well with street averages. No active margin optimization adjustments needed.
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = recs.slice(0, 3).map(rec => {
+        const borderStyle = rec.type === 'up' ? 'border-left: 3px solid var(--palm-green);' : 'border-left: 3px solid var(--sunset-orange);';
+        const bgStyle = rec.type === 'up' ? 'background: rgba(0, 255, 135, 0.04);' : 'background: rgba(255, 94, 54, 0.04);';
+        return `
+            <div style="${bgStyle} ${borderStyle} padding: 12px 15px; border-radius: 8px; font-size: 12px; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
+                ${rec.text}
+            </div>
+        `;
+    }).join('');
+}
+
+function renderCompetitorOffers() {
+    const container = document.getElementById('competitor-offers-list');
+    if (!container) return;
+    
+    container.innerHTML = COMPETITOR_OFFERS.map(item => {
+        let badgeClass = "impact-medium";
+        if (item.threat === 'High') {
+            badgeClass = "impact-extreme";
+        } else if (item.threat === 'Medium') {
+            badgeClass = "impact-high";
+        }
+        
+        return `
+            <div class="event-card" style="padding: 15px; background: rgba(0,0,0,0.15); border-radius: 8px; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
+                    <strong style="color: var(--sunset-orange); font-size: 13px;">${item.venue}</strong>
+                    <span class="impact-badge ${badgeClass}" style="font-size: 9px; padding: 2px 6px;">${item.threat} Threat</span>
+                </div>
+                <div style="font-size: 12px; font-weight: 600; color: white;">${item.offer}</div>
+                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.3;">${item.details}</p>
+                <div style="margin-top: 4px; font-size: 11px; padding: 8px 10px; background: rgba(255, 94, 54, 0.05); border-left: 2px solid var(--sunset-orange); border-radius: 4px; line-height: 1.3;">
+                    <strong>🛡️ Strategy:</strong> ${item.counter}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ==========================================
+// 8. WEATHER API FETCH
+// ==========================================
+async function fetchLiveHullWeather() {
+    try {
+        const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=53.7443&longitude=-0.3325&current=temperature_2m,weather_code");
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weather_code;
+        
+        let condition = "Fine Cloud";
+        if (code === 0) condition = "☀️ Clear Skies";
+        else if (code >= 1 && code <= 3) condition = "⛅ Partly Cloudy";
+        else if (code >= 51 && code <= 65) condition = "🌧️ Drizzle & Rain";
+        else condition = "☁️ Overcast";
+
+        document.getElementById('hull-temp').textContent = `${temp}°C`;
+        document.getElementById('hull-cond').textContent = `${condition} on Newland Ave`;
+    } catch (e) {
+        document.getElementById('hull-temp').textContent = "--°C";
+        document.getElementById('hull-cond').textContent = "☁️ Skies over Hull";
+    }
+}
+</script>
+</body>
+</html>
