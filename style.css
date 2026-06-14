@@ -429,6 +429,10 @@
             overflow: hidden;
         }
 
+        .kpi-card[onclick] {
+            cursor: pointer;
+        }
+
         .kpi-card::before {
             content: '';
             position: absolute;
@@ -1000,4 +1004,74 @@
             .kpi-value {
                 font-size: 32px;
             }
+        }
+
+        /* Product Performance Sort & Grouping classes */
+        .performance-table th {
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+        .performance-table th:hover {
+            color: white !important;
+        }
+        .category-header-row {
+            transition: background 0.2s ease;
+        }
+        .category-header-row:hover {
+            background: rgba(255, 94, 54, 0.12) !important;
+        }
+        .category-item-row td {
+            border-bottom: 1px solid rgba(255,255,255,0.01) !important;
+        }
+        .toggle-arrow {
+            transition: transform 0.2s ease;
+        }
+        
+        /* Word Cloud and Review Scraper styles */
+        .sentiment-tag {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sentiment-tag.pos {
+            border-color: rgba(0, 255, 135, 0.2);
+            color: var(--palm-green);
+        }
+        .sentiment-tag.neg {
+            border-color: rgba(255, 51, 102, 0.2);
+            color: var(--error-red);
+        }
+        .sentiment-tag:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        .sentiment-tag.active {
+            background: linear-gradient(135deg, #ff7e40 0%, #ff4500 100%);
+            border-color: var(--sunset-orange);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.25);
+        }
+        
+        .review-card {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.2s ease;
+        }
+        .review-card:hover {
+            border-color: rgba(255, 94, 54, 0.15);
         }

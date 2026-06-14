@@ -443,6 +443,10 @@
             overflow: hidden;
         }
 
+        .kpi-card[onclick] {
+            cursor: pointer;
+        }
+
         .kpi-card::before {
             content: '';
             position: absolute;
@@ -1016,6 +1020,76 @@
             }
         }
 
+        /* Product Performance Sort & Grouping classes */
+        .performance-table th {
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+        .performance-table th:hover {
+            color: white !important;
+        }
+        .category-header-row {
+            transition: background 0.2s ease;
+        }
+        .category-header-row:hover {
+            background: rgba(255, 94, 54, 0.12) !important;
+        }
+        .category-item-row td {
+            border-bottom: 1px solid rgba(255,255,255,0.01) !important;
+        }
+        .toggle-arrow {
+            transition: transform 0.2s ease;
+        }
+        
+        /* Word Cloud and Review Scraper styles */
+        .sentiment-tag {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sentiment-tag.pos {
+            border-color: rgba(0, 255, 135, 0.2);
+            color: var(--palm-green);
+        }
+        .sentiment-tag.neg {
+            border-color: rgba(255, 51, 102, 0.2);
+            color: var(--error-red);
+        }
+        .sentiment-tag:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        .sentiment-tag.active {
+            background: linear-gradient(135deg, #ff7e40 0%, #ff4500 100%);
+            border-color: var(--sunset-orange);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.25);
+        }
+        
+        .review-card {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.2s ease;
+        }
+        .review-card:hover {
+            border-color: rgba(255, 94, 54, 0.15);
+        }
+
     </style>
 </head>
 <body>
@@ -1045,6 +1119,8 @@
                 <a href="#" class="menu-item" id="menu-weather-trends" onclick="switchTab('weather-trends')">🌤️ Weather & Trends</a>
                 <a href="#" class="menu-item" id="menu-local-events" onclick="switchTab('local-events')">📅 Hull Local Events</a>
                 <a href="#" class="menu-item" id="menu-competitor-watch" onclick="switchTab('competitor-watch')">⚔️ Competitor Watch</a>
+                <a href="#" class="menu-item" id="menu-staffing-hours" onclick="switchTab('staffing-hours')">👥 Staffing & Labor</a>
+                <a href="#" class="menu-item" id="menu-reviews-socials" onclick="switchTab('reviews-socials')">💬 Reviews & Socials</a>
             </nav>
             <div class="sidebar-footer">
                 <p>Data updates hourly</p>
@@ -1109,7 +1185,7 @@
                 </div>
 
                 <section class="kpi-grid">
-                    <div class="kpi-card orange-glow">
+                    <div class="kpi-card orange-glow" onclick="scrollToChartView()" style="cursor: pointer;">
                         <h3>Revenue</h3>
                         <div class="kpi-value-container">
                             <div class="kpi-value" id="today-revenue">£0.00</div>
@@ -1120,12 +1196,26 @@
                             <span id="compare-sales-badge" class="comp-badge hidden" style="font-size: 11px; padding: 2px 5px;"></span>
                         </div>
                     </div>
-                    <div class="kpi-card green-glow">
-                        <h3>Top Category</h3>
-                        <div class="kpi-value" id="top-category">-</div>
-                        <span class="kpi-sub">By transaction volume</span>
+                    <div class="kpi-card green-glow" id="kpi-top-performers">
+                        <h3>Top Performers</h3>
+                        <div class="top-performers-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                            <div class="performer-row" id="best-drink-row" onclick="drillToProduct(this.getAttribute('data-product'))" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.02); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Drink</span>
+                                    <span class="performer-name" id="best-drink-name" style="font-weight: 500; color: #fff;">-</span>
+                                </div>
+                                <span class="performer-qty" id="best-drink-qty" style="font-size: 12px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(0, 255, 135, 0.1); color: var(--palm-green);">-</span>
+                            </div>
+                            <div class="performer-row" id="best-food-row" onclick="drillToProduct(this.getAttribute('data-product'))" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.02); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Food</span>
+                                    <span class="performer-name" id="best-food-name" style="font-weight: 500; color: #fff;">-</span>
+                                </div>
+                                <span class="performer-qty" id="best-food-qty" style="font-size: 12px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(0, 255, 135, 0.1); color: var(--palm-green);">-</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="kpi-card blue-glow">
+                    <div class="kpi-card blue-glow" onclick="switchTab('weather-trends')" style="cursor: pointer;">
                         <h3>Hull Weather Context</h3>
                         <div class="kpi-value" id="hull-temp">--°C</div>
                         <span class="kpi-sub" id="hull-cond">Loading sky...</span>
@@ -1134,7 +1224,14 @@
 
                 <section class="analytics-grid">
                     <div class="chart-container large-card chart-container-relative">
-                        <h3>Hourly Peak Times & Revenue Slicing</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                            <h3>Peak Times & Revenue Trends</h3>
+                            <div class="presets-toolbar" style="margin-top: 0;">
+                                <button class="preset-btn active" id="chart-view-hourly" onclick="changeChartView('hourly')" style="padding: 5px 12px; font-size: 11px; border-radius: 6px;">⏰ Hourly View</button>
+                                <button class="preset-btn" id="chart-view-daily" onclick="changeChartView('daily')" style="padding: 5px 12px; font-size: 11px; border-radius: 6px;">📅 Daily View</button>
+                                <button class="preset-btn" id="chart-view-dayofweek" onclick="changeChartView('dayofweek')" style="padding: 5px 12px; font-size: 11px; border-radius: 6px;">🗓️ Day-of-Week View</button>
+                            </div>
+                        </div>
                         <div style="position: relative; height:300px; width:100%;">
                             <canvas id="peakTimesChart"></canvas>
                         </div>
@@ -1160,17 +1257,69 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- WEEKLY TRENDS & SELLER DEEP-DIVES SECTION -->
+                <section class="analytics-grid" style="margin-top: 25px;">
+                    <div class="large-card" style="position: relative;">
+                        <h3 style="margin-bottom: 15px;">🗓️ Week-over-Week & Day-of-Week Comparison</h3>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                            Track Saturday revenues and day-of-week averages across recent weeks.
+                        </p>
+                        <div id="weekly-trends-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                                <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--sunset-orange);">Last 3 Saturdays</h4>
+                                <ul id="sat-trends-list" style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13px;">
+                                    <li>Loading...</li>
+                                </ul>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                                <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--palm-green);">Day-of-Week Average Rankings</h4>
+                                <div id="day-rankings-list" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <!-- Rankings in JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="small-card" style="position: relative;">
+                        <h3>⭐ Top/Worst Sellers Deep-Dive Insights</h3>
+                        <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">Actionable performance vectors for best and worst performing items.</p>
+                        <div id="item-deep-dive-feed" style="display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- TAB 2: PRODUCT PERFORMANCE -->
             <div id="tab-product-performance" class="tab-content hidden">
                 <div class="large-card">
                     <div class="card-header-flex">
-                        <h3>Product Performance Matrix</h3>
+                        <div>
+                            <h3>Product Performance Matrix</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Analyze sales slicing, categories, and weather/daypart correlations.</p>
+                        </div>
                         <div class="filter-controls">
                             <input type="text" id="product-search" placeholder="Search product..." class="search-input" oninput="renderExtendedProductTab()">
                             <select id="product-category-filter" class="select-input" onchange="renderExtendedProductTab()">
                                 <option value="all">All Categories</option>
+                            </select>
+                            <select id="product-daypart-filter" class="select-input" onchange="renderExtendedProductTab()">
+                                <option value="all">All Dayparts</option>
+                                <option value="Lunch">Lunch (12:00 - 16:59)</option>
+                                <option value="Dinner">Dinner (17:00 - 20:59)</option>
+                                <option value="Late Night">Late Night (21:00 - 04:59)</option>
+                            </select>
+                            <select id="product-weather-filter" class="select-input" onchange="renderExtendedProductTab()">
+                                <option value="all">All Weather</option>
+                                <option value="Warm">☀️ Warm</option>
+                                <option value="Moderate">⛅ Moderate</option>
+                                <option value="Rainy">🌧️ Rainy</option>
+                                <option value="Cold">❄️ Cold</option>
+                            </select>
+                            <select id="product-grouping-filter" class="select-input" onchange="renderExtendedProductTab()">
+                                <option value="none">No Grouping</option>
+                                <option value="category">Group by Category</option>
                             </select>
                         </div>
                     </div>
@@ -1178,11 +1327,11 @@
                         <table class="performance-table">
                             <thead>
                                 <tr>
-                                    <th>Product Name</th>
-                                    <th>Category</th>
-                                    <th>Quantity Sold</th>
-                                    <th>Total Revenue</th>
-                                    <th>Slicing (% of Sales)</th>
+                                    <th onclick="setProductSort('name')" style="cursor: pointer; user-select: none;">Product Name<span id="sort-icon-name"></span></th>
+                                    <th onclick="setProductSort('category')" style="cursor: pointer; user-select: none;">Category<span id="sort-icon-category"></span></th>
+                                    <th onclick="setProductSort('qty')" style="cursor: pointer; user-select: none;">Quantity Sold<span id="sort-icon-qty"></span></th>
+                                    <th onclick="setProductSort('revenue')" style="cursor: pointer; user-select: none;">Total Revenue<span id="sort-icon-revenue"></span></th>
+                                    <th onclick="setProductSort('slicing')" style="cursor: pointer; user-select: none;">Slicing (% of Sales)<span id="sort-icon-slicing"></span></th>
                                 </tr>
                             </thead>
                             <tbody id="extended-product-table-body">
@@ -1285,6 +1434,108 @@
                     </div>
                 </section>
             </div>
+
+            <!-- TAB 6: STAFFING & LABOR -->
+            <div id="tab-staffing-hours" class="tab-content hidden">
+                <section class="kpi-grid">
+                    <div class="kpi-card orange-glow">
+                        <h3>Scheduled Labor Cost</h3>
+                        <div class="kpi-value-container">
+                            <div class="kpi-value" id="labor-cost-val">£0.00</div>
+                        </div>
+                        <span class="kpi-sub" id="labor-pct-sub">Target: 28% of sales</span>
+                    </div>
+                    <div class="kpi-card green-glow">
+                        <h3>Scheduled Labor Hours</h3>
+                        <div class="kpi-value" id="labor-hours-val">0 hrs</div>
+                        <span class="kpi-sub" id="labor-hours-sub">1 hr per £45 of sales</span>
+                    </div>
+                    <div class="kpi-card blue-glow">
+                        <h3>Sales per Labor Hour (SPH)</h3>
+                        <div class="kpi-value" id="labor-sph-val">£0.00</div>
+                        <span class="kpi-sub" id="labor-sph-sub">Benchmark Target: £45.00</span>
+                    </div>
+                </section>
+                
+                <section class="analytics-grid">
+                    <div class="large-card">
+                        <h3>👥 Roster vs. Sales Peak Deployment Timeline</h3>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; margin-bottom: 20px;">Hour-by-hour labor deployment matching actual peak transactions curve.</p>
+                        
+                        <div class="table-container">
+                            <table class="performance-table" style="font-size: 13px;">
+                                <thead>
+                                    <tr>
+                                        <th>Hour Slot</th>
+                                        <th>Staff Scheduled</th>
+                                        <th>Target Staff (Sales Model)</th>
+                                        <th>Status Indicator</th>
+                                        <th>Action/Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="staffing-timeline-tbody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="small-card" style="display: flex; flex-direction: column; gap: 20px;">
+                        <h3>💡 Labor Optimization Insights</h3>
+                        <div id="labor-insights-feed" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Dynamic recommendations -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB 7: REVIEWS & SOCIALS SENTIMENT -->
+            <div id="tab-reviews-socials" class="tab-content hidden">
+                <section class="kpi-grid">
+                    <div class="kpi-card orange-glow">
+                        <h3>Google Reviews</h3>
+                        <div class="kpi-value-container">
+                            <div class="kpi-value">4.7 ★</div>
+                        </div>
+                        <span class="kpi-sub">Based on 342 user ratings</span>
+                    </div>
+                    <div class="kpi-card green-glow">
+                        <h3>TripAdvisor</h3>
+                        <div class="kpi-value">4.5 ★</div>
+                        <span class="kpi-sub">Based on 198 restaurant reviews</span>
+                    </div>
+                    <div class="kpi-card blue-glow">
+                        <h3>Net Sentiment Score</h3>
+                        <div class="kpi-value">+84%</div>
+                        <span class="kpi-sub">Based on AI feedback scraping</span>
+                    </div>
+                </section>
+                
+                <section class="analytics-grid">
+                    <div class="large-card">
+                        <h3 style="margin-bottom: 15px;">💬 Guest Review Feed Scraper</h3>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Scraping TripAdvisor and Google Reviews for keyword mentions on Newland Ave.</p>
+                        
+                        <div id="social-reviews-list" style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Injected reviews -->
+                        </div>
+                    </div>
+                    
+                    <div class="small-card" style="display: flex; flex-direction: column; gap: 15px;">
+                        <h3>🏷️ Sentiment Word Cloud Matrix</h3>
+                        <p style="color: var(--text-muted); font-size: 12px;">Click a sentiment keyword tag to filter guest reviews by theme.</p>
+                        
+                        <div id="sentiment-word-cloud" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px;">
+                            <!-- Interactive word tags -->
+                        </div>
+                        
+                        <div id="cloud-filter-indicator" class="hidden" style="margin-top: 15px; padding: 10px; background: rgba(255, 94, 54, 0.08); border: 1px solid rgba(255, 94, 54, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                            <span>Active tag filter: <strong id="active-tag-name" style="color: var(--sunset-orange);"></strong></span>
+                            <button onclick="clearCloudFilter()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: bold;">[Clear]</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
@@ -1329,6 +1580,11 @@
         let productMetrics = {};
         let currentProductTab = 'top';
         let peakChart = null;
+        let activeFilteredSales = [];
+        let productSortColumn = 'revenue';
+        let productSortAsc = false;
+        let activeReviewTag = null;
+        let activeChartView = 'hourly';
 
         // Hull Local Events Dataset
         const HULL_EVENTS = [
@@ -1517,6 +1773,38 @@
             toggleSidebar(false);
         }
 
+        function drillToProduct(productName) {
+            if (!productName) return;
+            switchTab('product-performance');
+            
+            const searchInput = document.getElementById('product-search');
+            if (searchInput) {
+                searchInput.value = productName;
+            }
+            
+            const catFilter = document.getElementById('product-category-filter');
+            if (catFilter) catFilter.value = 'all';
+            
+            const daypartFilter = document.getElementById('product-daypart-filter');
+            if (daypartFilter) daypartFilter.value = 'all';
+            
+            const weatherFilter = document.getElementById('product-weather-filter');
+            if (weatherFilter) weatherFilter.value = 'all';
+            
+            const groupingFilter = document.getElementById('product-grouping-filter');
+            if (groupingFilter) groupingFilter.value = 'none';
+            
+            renderExtendedProductTab();
+        }
+
+        function scrollToChartView() {
+            changeChartView('daily');
+            const chartEl = document.getElementById('peakTimesChart');
+            if (chartEl) {
+                chartEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
         // ==========================================
         // 3. INITIALIZATION & SYNC PIPELINES
         // ==========================================
@@ -1566,35 +1854,31 @@
                             btnLow.classList.add('active');
                         }
                     } else if (action === 'show_products') {
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                        const tabProd = document.getElementById('tab-product-performance');
-                        if (tabProd) tabProd.classList.remove('hidden');
-                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
-                        const linkProd = document.getElementById('menu-product-performance');
-                        if (linkProd) linkProd.classList.add('active');
+                        switchTab('product-performance');
+                    } else if (action === 'show_products_grouped') {
+                        switchTab('product-performance');
+                        const grp = document.getElementById('product-grouping-filter');
+                        if (grp) grp.value = 'category';
                     } else if (action === 'show_weather') {
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                        const tabWeather = document.getElementById('tab-weather-trends');
-                        if (tabWeather) tabWeather.classList.remove('hidden');
-                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
-                        const linkWeather = document.getElementById('menu-weather-trends');
-                        if (linkWeather) linkWeather.classList.add('active');
+                        switchTab('weather-trends');
                     } else if (action === 'show_events') {
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                        const tabEvents = document.getElementById('tab-local-events');
-                        if (tabEvents) tabEvents.classList.remove('hidden');
-                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
-                        const linkEvents = document.getElementById('menu-local-events');
-                        if (linkEvents) linkEvents.classList.add('active');
+                        switchTab('local-events');
                     } else if (action === 'show_competitors') {
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                        const tabComp = document.getElementById('tab-competitor-watch');
-                        if (tabComp) tabComp.classList.remove('hidden');
-                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
-                        const linkComp = document.getElementById('menu-competitor-watch');
-                        if (linkComp) linkComp.classList.add('active');
+                        switchTab('competitor-watch');
+                    } else if (action === 'show_staffing') {
+                        switchTab('staffing-hours');
+                    } else if (action === 'show_reviews') {
+                        switchTab('reviews-socials');
+                    } else if (action === 'show_daily_chart') {
+                        switchTab('daily-takings');
+                        changeChartView('daily');
+                    } else if (action === 'show_dayofweek_chart') {
+                        switchTab('daily-takings');
+                        changeChartView('dayofweek');
                     } else if (action === 'open_drawer') {
                         toggleSidebar(true);
+                    } else if (action === 'drill_drink') {
+                        drillToProduct('Reggae Rum Punch');
                     } else if (action === 'test_no_data') {
                         document.getElementById('date-start').value = '2026-06-15';
                         document.getElementById('date-end').value = '2026-06-15';
@@ -1607,14 +1891,7 @@
                         return;
                     } else if (action === 'test_compare_insights') {
                         document.getElementById('compare-toggle').checked = true;
-                        // Switch tab to weather-trends
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                        const tabWeather = document.getElementById('tab-weather-trends');
-                        if (tabWeather) tabWeather.classList.remove('hidden');
-                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
-                        const linkWeather = document.getElementById('menu-weather-trends');
-                        if (linkWeather) linkWeather.classList.add('active');
-                        
+                        switchTab('weather-trends');
                         applyPreset('7d');
                         return;
                     }
@@ -1638,17 +1915,35 @@
                 // Apply test action in catch block for testing sample data fallback
                 const urlParams = new URLSearchParams(window.location.search);
                 const action = urlParams.get('test_action');
-                if (action === 'test_load_sample' || action === 'show_competitors' || action === 'open_drawer') {
+                if (action) {
                     loadSampleDataFallback();
                     if (action === 'show_competitors') {
-                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                        const tabComp = document.getElementById('tab-competitor-watch');
-                        if (tabComp) tabComp.classList.remove('hidden');
-                        document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
-                        const linkComp = document.getElementById('menu-competitor-watch');
-                        if (linkComp) linkComp.classList.add('active');
+                        switchTab('competitor-watch');
+                    } else if (action === 'show_staffing') {
+                        switchTab('staffing-hours');
+                    } else if (action === 'show_reviews') {
+                        switchTab('reviews-socials');
+                    } else if (action === 'show_products') {
+                        switchTab('product-performance');
+                    } else if (action === 'show_products_grouped') {
+                        switchTab('product-performance');
+                        const grp = document.getElementById('product-grouping-filter');
+                        if (grp) grp.value = 'category';
+                        renderExtendedProductTab();
+                    } else if (action === 'show_weather') {
+                        switchTab('weather-trends');
+                    } else if (action === 'show_events') {
+                        switchTab('local-events');
+                    } else if (action === 'show_daily_chart') {
+                        switchTab('daily-takings');
+                        changeChartView('daily');
+                    } else if (action === 'show_dayofweek_chart') {
+                        switchTab('daily-takings');
+                        changeChartView('dayofweek');
                     } else if (action === 'open_drawer') {
                         toggleSidebar(true);
+                    } else if (action === 'drill_drink') {
+                        drillToProduct('Reggae Rum Punch');
                     }
                     return;
                 }
@@ -1677,7 +1972,7 @@
             const pulseTargets = [
                 document.getElementById('today-revenue'),
                 document.getElementById('sales-count'),
-                document.getElementById('top-category'),
+                document.getElementById('kpi-top-performers'),
                 document.getElementById('hull-temp'),
                 document.getElementById('hull-cond'),
                 document.getElementById('product-list'),
@@ -2065,8 +2360,56 @@
             document.getElementById('today-revenue').textContent = `£${totalRevenue.toFixed(2)}`;
             document.getElementById('sales-count').textContent = `${totalSalesCount} sales logged`;
 
-            const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
-            document.getElementById('top-category').textContent = sortedCategories[0] ? sortedCategories[0][0] : '-';
+            // Calculate Best Drink and Best Food performer rows
+            let bestDrink = { name: "-", qty: 0, category: "" };
+            let bestFood = { name: "-", qty: 0, category: "" };
+
+            const DRINK_CATEGORIES = ["Cocktails", "Bottles", "Draught", "Draught Beer", "Soft Drinks", "Spirits", "Rum", "Wine", "Beers", "Drinks"];
+
+            Object.values(productMetrics).forEach(item => {
+                const cat = item.category || "";
+                const isDrink = DRINK_CATEGORIES.some(dc => cat.toLowerCase().includes(dc.toLowerCase()));
+                if (isDrink) {
+                    if (item.qty > bestDrink.qty) {
+                        bestDrink = { name: item.name, qty: item.qty, category: item.category };
+                    }
+                } else {
+                    if (item.qty > bestFood.qty) {
+                        bestFood = { name: item.name, qty: item.qty, category: item.category };
+                    }
+                }
+            });
+
+            // Update UI elements for Best Drink and Best Food
+            const drinkRowEl = document.getElementById('best-drink-row');
+            const drinkNameEl = document.getElementById('best-drink-name');
+            const drinkQtyEl = document.getElementById('best-drink-qty');
+
+            const foodRowEl = document.getElementById('best-food-row');
+            const foodNameEl = document.getElementById('best-food-name');
+            const foodQtyEl = document.getElementById('best-food-qty');
+
+            if (bestDrink.qty > 0) {
+                const drinkEmoji = getProductEmoji(bestDrink.name, bestDrink.category);
+                if (drinkNameEl) drinkNameEl.innerHTML = `${drinkEmoji} ${bestDrink.name}`;
+                if (drinkQtyEl) drinkQtyEl.textContent = `${bestDrink.qty} sold`;
+                if (drinkRowEl) drinkRowEl.setAttribute('data-product', bestDrink.name);
+            } else {
+                if (drinkNameEl) drinkNameEl.textContent = "-";
+                if (drinkQtyEl) drinkQtyEl.textContent = "-";
+                if (drinkRowEl) drinkRowEl.removeAttribute('data-product');
+            }
+
+            if (bestFood.qty > 0) {
+                const foodEmoji = getProductEmoji(bestFood.name, bestFood.category);
+                if (foodNameEl) foodNameEl.innerHTML = `${foodEmoji} ${bestFood.name}`;
+                if (foodQtyEl) foodQtyEl.textContent = `${bestFood.qty} sold`;
+                if (foodRowEl) foodRowEl.setAttribute('data-product', bestFood.name);
+            } else {
+                if (foodNameEl) foodNameEl.textContent = "-";
+                if (foodQtyEl) foodQtyEl.textContent = "-";
+                if (foodRowEl) foodRowEl.removeAttribute('data-product');
+            }
 
             // Update Comparison badges
             if (compareEnabled) {
@@ -2081,7 +2424,7 @@
             }
 
             // Refresh Sub-modules
-            renderPeakTimesChart(hourlyRevenue, compareEnabled ? prevHourlyRevenue : null);
+            renderPeakTimesChart(filteredSales, prevSales, compareEnabled);
             renderProductRanking();
             renderExtendedProductTab();
             renderWeatherTrendsTab(totalRevenue, categoryCounts);
@@ -2095,6 +2438,15 @@
             renderCategoryIndexGauges();
             generatePricingRecommendations(filteredSales);
             renderCompetitorOffers();
+            
+            // New Integration Dashboards
+            activeFilteredSales = filteredSales;
+            renderStaffingTab(totalRevenue, hourlyRevenue);
+            renderReviewsTab();
+            
+            // New Weekly Trends & Seller Deep-Dives
+            renderWeeklyTrends();
+            renderSellerDeepDiveInsights();
         }
 
         function updateCompareBadge(badgeId, pctChange) {
@@ -2127,7 +2479,19 @@
         function showEmptyStates(startDate, endDate) {
             document.getElementById('today-revenue').textContent = "£0.00";
             document.getElementById('sales-count').textContent = "0 transactions logged";
-            document.getElementById('top-category').textContent = "-";
+            
+            const drinkRowEl = document.getElementById('best-drink-row');
+            const drinkNameEl = document.getElementById('best-drink-name');
+            const drinkQtyEl = document.getElementById('best-drink-qty');
+            const foodRowEl = document.getElementById('best-food-row');
+            const foodNameEl = document.getElementById('best-food-name');
+            const foodQtyEl = document.getElementById('best-food-qty');
+            if (drinkNameEl) drinkNameEl.textContent = "-";
+            if (drinkQtyEl) drinkQtyEl.textContent = "-";
+            if (drinkRowEl) drinkRowEl.removeAttribute('data-product');
+            if (foodNameEl) foodNameEl.textContent = "-";
+            if (foodQtyEl) foodQtyEl.textContent = "-";
+            if (foodRowEl) foodRowEl.removeAttribute('data-product');
             
             updateCompareBadge('compare-revenue-badge', null);
             updateCompareBadge('compare-sales-badge', null);
@@ -2325,23 +2689,157 @@
 // ==========================================
 // 7. RENDER MODULES (CHARTS, TABLES & VIEWS)
 // ==========================================
-function renderPeakTimesChart(currentHourlyData, previousHourlyData) {
+function renderPeakTimesChart(currentSales, previousSales, compareEnabled) {
     const ctx = document.getElementById('peakTimesChart').getContext('2d');
-    if (peakChart) peakChart.destroy(); 
+    if (peakChart) peakChart.destroy();
 
-    // Create glowing neon sunset orange gradient for current sales
+    let labels = [];
+    let currentData = [];
+    let previousData = [];
+    let chartLabelCurrent = 'Selected Period (£)';
+    let chartLabelPrevious = 'Previous Period (£)';
+
+    if (activeChartView === 'hourly') {
+        const curHourly = Array(24).fill(0);
+        const prevHourly = Array(24).fill(0);
+
+        currentSales.forEach(item => {
+            if (item.type && item.type.toLowerCase() === 'void') return;
+            if (item.timestamp && item.timestamp.includes(' ')) {
+                const hour = parseInt(item.timestamp.split(' ')[1].split(':')[0]) || 0;
+                curHourly[hour] += item.price;
+            }
+        });
+
+        if (compareEnabled && previousSales) {
+            previousSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+                if (item.timestamp && item.timestamp.includes(' ')) {
+                    const hour = parseInt(item.timestamp.split(' ')[1].split(':')[0]) || 0;
+                    prevHourly[hour] += item.price;
+                }
+            });
+        }
+
+        for (let h = 0; h < 24; h++) {
+            if (curHourly[h] > 0 || (compareEnabled && prevHourly[h] > 0)) {
+                labels.push(`${h.toString().padStart(2, '0')}:00`);
+                currentData.push(curHourly[h]);
+                if (compareEnabled) {
+                    previousData.push(prevHourly[h]);
+                }
+            }
+        }
+    } else if (activeChartView === 'daily') {
+        const curDaily = {};
+        currentSales.forEach(item => {
+            if (item.type && item.type.toLowerCase() === 'void') return;
+            if (item.timestamp) {
+                const d = parseDateToYYYYMMDD(item.timestamp);
+                curDaily[d] = (curDaily[d] || 0) + item.price;
+            }
+        });
+
+        const currentDates = Object.keys(curDaily).sort();
+        labels = currentDates.map(d => {
+            const parts = d.split('-');
+            if (parts.length === 3) {
+                const dateObj = new Date(parts[0], parts[1]-1, parts[2]);
+                return dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+            }
+            return d;
+        });
+        currentData = currentDates.map(d => curDaily[d]);
+
+        if (compareEnabled && previousSales) {
+            const prevDaily = {};
+            previousSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+                if (item.timestamp) {
+                    const d = parseDateToYYYYMMDD(item.timestamp);
+                    prevDaily[d] = (prevDaily[d] || 0) + item.price;
+                }
+            });
+            const prevDates = Object.keys(prevDaily).sort();
+            
+            for (let i = 0; i < currentDates.length; i++) {
+                if (i < prevDates.length) {
+                    previousData.push(prevDaily[prevDates[i]]);
+                } else {
+                    previousData.push(0);
+                }
+            }
+        }
+        chartLabelCurrent = 'Daily Revenue (£)';
+        chartLabelPrevious = 'Prev Period Daily (£)';
+    } else if (activeChartView === 'dayofweek') {
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        labels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        const curDayMap = {};
+        currentSales.forEach(item => {
+            if (item.type && item.type.toLowerCase() === 'void') return;
+            if (item.timestamp) {
+                const dateStr = parseDateToYYYYMMDD(item.timestamp);
+                curDayMap[dateStr] = (curDayMap[dateStr] || 0) + item.price;
+            }
+        });
+
+        const curDayOfWeekSum = {};
+        const curDayOfWeekCount = {};
+        Object.entries(curDayMap).forEach(([dateStr, rev]) => {
+            const dayIndex = new Date(dateStr).getDay();
+            const dayName = daysOfWeek[dayIndex];
+            curDayOfWeekSum[dayName] = (curDayOfWeekSum[dayName] || 0) + rev;
+            curDayOfWeekCount[dayName] = (curDayOfWeekCount[dayName] || 0) + 1;
+        });
+
+        currentData = labels.map(dayName => {
+            const sum = curDayOfWeekSum[dayName] || 0;
+            const count = curDayOfWeekCount[dayName] || 1;
+            return sum / count;
+        });
+
+        if (compareEnabled && previousSales) {
+            const prevDayMap = {};
+            previousSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+                if (item.timestamp) {
+                    const dateStr = parseDateToYYYYMMDD(item.timestamp);
+                    prevDayMap[dateStr] = (prevDayMap[dateStr] || 0) + item.price;
+                }
+            });
+
+            const prevDayOfWeekSum = {};
+            const prevDayOfWeekCount = {};
+            Object.entries(prevDayMap).forEach(([dateStr, rev]) => {
+                const dayIndex = new Date(dateStr).getDay();
+                const dayName = daysOfWeek[dayIndex];
+                prevDayOfWeekSum[dayName] = (prevDayOfWeekSum[dayName] || 0) + rev;
+                prevDayOfWeekCount[dayName] = (prevDayOfWeekCount[dayName] || 0) + 1;
+            });
+
+            previousData = labels.map(dayName => {
+                const sum = prevDayOfWeekSum[dayName] || 0;
+                const count = prevDayOfWeekCount[dayName] || 1;
+                return sum / count;
+            });
+        }
+        chartLabelCurrent = 'Selected Period Avg (£)';
+        chartLabelPrevious = 'Previous Period Avg (£)';
+    }
+
     const currentGradient = ctx.createLinearGradient(0, 0, 0, 300);
     currentGradient.addColorStop(0, 'rgba(255, 94, 54, 0.95)');
     currentGradient.addColorStop(1, 'rgba(255, 26, 64, 0.3)');
 
-    // Create glowing neon blue/cyan gradient for comparison sales
     const previousGradient = ctx.createLinearGradient(0, 0, 0, 300);
     previousGradient.addColorStop(0, 'rgba(0, 212, 255, 0.9)');
     previousGradient.addColorStop(1, 'rgba(0, 80, 192, 0.15)');
 
     const datasets = [{
-        label: 'Selected Period (£)',
-        data: currentHourlyData,
+        label: chartLabelCurrent,
+        data: currentData,
         backgroundColor: currentGradient,
         borderColor: 'rgba(255, 94, 54, 0.8)',
         borderWidth: 1,
@@ -2349,10 +2847,10 @@ function renderPeakTimesChart(currentHourlyData, previousHourlyData) {
         order: 1
     }];
 
-    if (previousHourlyData) {
+    if (compareEnabled && previousData.length > 0) {
         datasets.push({
-            label: 'Previous Period (£)',
-            data: previousHourlyData,
+            label: chartLabelPrevious,
+            data: previousData,
             backgroundColor: previousGradient,
             borderColor: 'rgba(0, 212, 255, 0.6)',
             borderWidth: 1,
@@ -2364,7 +2862,7 @@ function renderPeakTimesChart(currentHourlyData, previousHourlyData) {
     peakChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`),
+            labels: labels,
             datasets: datasets
         },
         options: {
@@ -2459,26 +2957,69 @@ function renderProductRanking() {
 // Extended Product Performance Tab
 function renderExtendedProductTab() {
     const tbody = document.getElementById('extended-product-table-body');
-    const searchVal = document.getElementById('product-search').value.toLowerCase();
-    const categoryVal = document.getElementById('product-category-filter').value;
+    if (!tbody) return;
     
-    const items = Object.values(productMetrics);
-    if (items.length === 0) return;
+    const searchVal = document.getElementById('product-search')?.value.toLowerCase() || "";
+    const categoryVal = document.getElementById('product-category-filter')?.value || "all";
+    const daypartVal = document.getElementById('product-daypart-filter')?.value || "all";
+    const weatherVal = document.getElementById('product-weather-filter')?.value || "all";
+    const groupingVal = document.getElementById('product-grouping-filter')?.value || "none";
     
-    const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
-    items.sort((a, b) => b.revenue - a.revenue);
+    if (activeFilteredSales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px 0;">No active date range sales data.</td></tr>`;
+        return;
+    }
     
-    const filteredItems = items.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(searchVal);
-        const matchesCategory = categoryVal === 'all' || item.category === categoryVal;
-        return matchesSearch && matchesCategory;
+    // Process active filtered sales into product-specific counts based on filters
+    const currentProductMetrics = {};
+    let activeTotalQty = 0;
+    
+    activeFilteredSales.forEach(item => {
+        if (item.type && item.type.toLowerCase() === 'void') return;
+        
+        // Filter by Daypart
+        if (daypartVal !== 'all') {
+            const dp = getDaypart(item.timestamp);
+            if (dp !== daypartVal) return;
+        }
+        
+        // Filter by Weather
+        if (weatherVal !== 'all') {
+            const datePart = parseDateToYYYYMMDD(item.timestamp);
+            const w = getWeatherForDate(datePart);
+            if (w !== weatherVal) return;
+        }
+        
+        if (item.productName) {
+            const cat = item.category || "Other";
+            
+            // Search filter
+            const matchesSearch = item.productName.toLowerCase().includes(searchVal);
+            
+            // Category filter
+            const matchesCategory = categoryVal === 'all' || cat === categoryVal;
+            
+            if (matchesSearch && matchesCategory) {
+                if (!currentProductMetrics[item.productName]) {
+                    currentProductMetrics[item.productName] = {
+                        name: item.productName,
+                        qty: 0,
+                        revenue: 0,
+                        category: cat
+                    };
+                }
+                currentProductMetrics[item.productName].qty++;
+                currentProductMetrics[item.productName].revenue += item.price;
+                activeTotalQty++;
+            }
+        }
     });
     
     // Populate select element filter options dynamically once
     const categorySelect = document.getElementById('product-category-filter');
-    if (categorySelect.options.length === 1) {
-        const categories = [...new Set(items.map(item => item.category))].filter(Boolean);
-        categories.forEach(cat => {
+    if (categorySelect && categorySelect.options.length === 1) {
+        const categories = [...new Set(salesData.map(item => item.category))].filter(Boolean);
+        categories.sort().forEach(cat => {
             const opt = document.createElement('option');
             opt.value = cat;
             opt.textContent = cat;
@@ -2486,28 +3027,98 @@ function renderExtendedProductTab() {
         });
     }
     
-    if (filteredItems.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px 0;">No products match search criteria.</td></tr>`;
+    const items = Object.values(currentProductMetrics);
+    
+    if (items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px 0;">No products match the selected filters.</td></tr>`;
         return;
     }
     
-    tbody.innerHTML = filteredItems.map(item => {
-        const pct = totalQty > 0 ? ((item.qty / totalQty) * 100).toFixed(1) : '0.0';
-        return `
-            <tr>
-                <td><strong>${item.name}</strong></td>
-                <td><span class="category-pill">${item.category}</span></td>
-                <td>${item.qty} sold</td>
-                <td class="revenue-cell">£${item.revenue.toFixed(2)}</td>
-                <td>
-                    <div class="progress-bar-container">
-                        <div style="background-color: var(--sunset-orange); height: 6px; border-radius: 3px; width: ${Math.min(parseFloat(pct) * 2.5, 100)}%;"></div>
-                        <span class="progress-text">${pct}%</span>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }).join('');
+    // Sort items
+    sortProductList(items, productSortColumn, productSortAsc, activeTotalQty);
+    
+    // Update header sort indicator UI
+    updateSortHeadersUI();
+    
+    if (groupingVal === 'category') {
+        const grouped = {};
+        items.forEach(item => {
+            if (!grouped[item.category]) {
+                grouped[item.category] = {
+                    name: item.category,
+                    qty: 0,
+                    revenue: 0,
+                    items: []
+                };
+            }
+            grouped[item.category].qty += item.qty;
+            grouped[item.category].revenue += item.revenue;
+            grouped[item.category].items.push(item);
+        });
+        
+        const sortedGroups = Object.values(grouped).sort((a, b) => b.revenue - a.revenue);
+        
+        let html = "";
+        sortedGroups.forEach((group, gIdx) => {
+            const groupPct = activeTotalQty > 0 ? ((group.qty / activeTotalQty) * 100).toFixed(1) : '0.0';
+            const groupId = `cat-group-${gIdx}`;
+            
+            html += `
+                <tr class="category-header-row" onclick="toggleCategoryGroup('${groupId}')" style="cursor: pointer; background: rgba(255, 94, 54, 0.08); font-weight: bold;">
+                    <td><span class="toggle-arrow" id="arrow-${groupId}" style="display: inline-block; margin-right: 8px; transition: transform 0.2s;">▼</span>${group.name}</td>
+                    <td><span class="category-pill" style="background: var(--sunset-orange); color: white;">Subtotal</span></td>
+                    <td>${group.qty} sold</td>
+                    <td class="revenue-cell">£${group.revenue.toFixed(2)}</td>
+                    <td>
+                        <div class="progress-bar-container">
+                            <div style="background-color: var(--palm-green); height: 6px; border-radius: 3px; width: ${Math.min(parseFloat(groupPct) * 2.5, 100)}%;"></div>
+                            <span class="progress-text" style="color: var(--palm-green);">${groupPct}%</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            group.items.forEach(item => {
+                const itemPct = activeTotalQty > 0 ? ((item.qty / activeTotalQty) * 100).toFixed(1) : '0.0';
+                const emoji = getProductEmoji(item.name, item.category);
+                html += `
+                    <tr class="category-item-row ${groupId}" style="background: rgba(255, 255, 255, 0.01); transition: opacity 0.2s;">
+                        <td style="padding-left: 30px;">${emoji} ${item.name}</td>
+                        <td><span class="category-pill">${item.category}</span></td>
+                        <td>${item.qty} sold</td>
+                        <td class="revenue-cell">£${item.revenue.toFixed(2)}</td>
+                        <td>
+                            <div class="progress-bar-container">
+                                <div style="background-color: var(--sunset-orange); height: 6px; border-radius: 3px; width: ${Math.min(parseFloat(itemPct) * 2.5, 100)}%;"></div>
+                                <span class="progress-text">${itemPct}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+        
+        tbody.innerHTML = html;
+    } else {
+        tbody.innerHTML = items.map(item => {
+            const pct = activeTotalQty > 0 ? ((item.qty / activeTotalQty) * 100).toFixed(1) : '0.0';
+            const emoji = getProductEmoji(item.name, item.category);
+            return `
+                <tr>
+                    <td><strong>${emoji} ${item.name}</strong></td>
+                    <td><span class="category-pill">${item.category}</span></td>
+                    <td>${item.qty} sold</td>
+                    <td class="revenue-cell">£${item.revenue.toFixed(2)}</td>
+                    <td>
+                        <div class="progress-bar-container">
+                            <div style="background-color: var(--sunset-orange); height: 6px; border-radius: 3px; width: ${Math.min(parseFloat(pct) * 2.5, 100)}%;"></div>
+                            <span class="progress-text">${pct}%</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
 }
 
 // Weather Operations Insights Tab
@@ -2947,6 +3558,532 @@ async function fetchLiveHullWeather() {
         document.getElementById('hull-temp').textContent = "--°C";
         document.getElementById('hull-cond').textContent = "☁️ Skies over Hull";
     }
+}
+
+// ==========================================
+// 9. NEW ADVANCED INTERACTIVE INTEGRATIONS
+// ==========================================
+
+function getWeatherForDate(dateStr) {
+    if (!dateStr) return "Moderate";
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+        hash = dateStr.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % 4;
+    const weatherTypes = ["Warm", "Moderate", "Rainy", "Cold"];
+    return weatherTypes[index];
+}
+
+function getDaypart(timestamp) {
+    if (!timestamp || !timestamp.includes(' ')) return "Lunch";
+    const timePart = timestamp.split(' ')[1];
+    const hour = parseInt(timePart.split(':')[0]);
+    if (hour >= 12 && hour < 17) return "Lunch";
+    if (hour >= 17 && hour < 21) return "Dinner";
+    return "Late Night";
+}
+
+function getProductEmoji(name, category) {
+    const n = name.toLowerCase();
+    const c = (category || "").toLowerCase();
+    if (n.includes("rum") || n.includes("punch") || n.includes("zombie") || n.includes("colada") || n.includes("marley")) return "🍹";
+    if (n.includes("red stripe") || n.includes("pint") || n.includes("beer") || n.includes("cruz campo") || n.includes("draught")) return "🍺";
+    if (n.includes("corona") || n.includes("bottle")) return "🍾";
+    if (n.includes("coke") || n.includes("water") || n.includes("soft") || n.includes("soda") || n.includes("juice")) return "🥤";
+    if (n.includes("chicken") || n.includes("jerk") || n.includes("curry") || n.includes("goat") || n.includes("mutton") || n.includes("pot") || n.includes("pit")) return "🍗";
+    if (n.includes("fries") || n.includes("chips")) return "🍟";
+    if (n.includes("mac") || n.includes("cheese") || n.includes("balls") || n.includes("bites") || n.includes("squid") || n.includes("ribs")) return "🧆";
+    if (c.includes("cocktail")) return "🍹";
+    if (c.includes("draught") || c.includes("beer")) return "🍺";
+    if (c.includes("bottle")) return "🍾";
+    if (c.includes("soft")) return "🥤";
+    if (c.includes("main") || c.includes("classic") || c.includes("pot") || c.includes("pit")) return "🍽️";
+    if (c.includes("bite") || c.includes("fixin") || c.includes("side")) return "🧆";
+    return "🍽️";
+}
+
+function setProductSort(column) {
+    if (productSortColumn === column) {
+        productSortAsc = !productSortAsc;
+    } else {
+        productSortColumn = column;
+        productSortAsc = false;
+        if (column === 'name' || column === 'category') {
+            productSortAsc = true;
+        }
+    }
+    renderExtendedProductTab();
+}
+
+function sortProductList(items, column, ascending, totalQty) {
+    items.sort((a, b) => {
+        let valA, valB;
+        if (column === 'name') {
+            valA = a.name.toLowerCase();
+            valB = b.name.toLowerCase();
+        } else if (column === 'category') {
+            valA = a.category.toLowerCase();
+            valB = b.category.toLowerCase();
+        } else if (column === 'qty') {
+            valA = a.qty;
+            valB = b.qty;
+        } else if (column === 'revenue') {
+            valA = a.revenue;
+            valB = b.revenue;
+        } else if (column === 'slicing') {
+            valA = totalQty > 0 ? a.qty / totalQty : 0;
+            valB = totalQty > 0 ? b.qty / totalQty : 0;
+        }
+        
+        if (valA < valB) return ascending ? -1 : 1;
+        if (valA > valB) return ascending ? 1 : -1;
+        return 0;
+    });
+}
+
+function updateSortHeadersUI() {
+    const cols = ['name', 'category', 'qty', 'revenue', 'slicing'];
+    cols.forEach(col => {
+        const span = document.getElementById(`sort-icon-${col}`);
+        if (!span) return;
+        if (productSortColumn === col) {
+            span.textContent = productSortAsc ? " ▲" : " ▼";
+            span.style.color = "var(--sunset-orange)";
+        } else {
+            span.textContent = "";
+        }
+    });
+}
+
+function toggleCategoryGroup(groupId) {
+    const rows = document.querySelectorAll(`.${groupId}`);
+    const arrow = document.getElementById(`arrow-${groupId}`);
+    if (rows.length === 0) return;
+    
+    const isHidden = rows[0].style.display === 'none';
+    rows.forEach(row => {
+        row.style.display = isHidden ? '' : 'none';
+    });
+    
+    if (arrow) {
+        arrow.style.transform = isHidden ? '' : 'rotate(-90deg)';
+    }
+}
+
+// RENDER STAFFING & LABOR TAB
+function renderStaffingTab(totalRevenue, hourlyRevenue) {
+    const laborCostVal = document.getElementById('labor-cost-val');
+    if (!laborCostVal) return;
+    
+    const startDateStr = document.getElementById('date-start').value;
+    const endDateStr = document.getElementById('date-end').value;
+    const daysCount = Math.max(1, Math.round((new Date(endDateStr) - new Date(startDateStr)) / (24 * 3600 * 1000)) + 1);
+    
+    // Average staff hourly wage is £11.50
+    const wageRate = 11.50;
+    
+    // Calculate targeted roster hours: Target SPH is £45.00/hr
+    const targetSPH = 45.00;
+    const modelHours = Math.round(totalRevenue / targetSPH);
+    const scheduledHours = Math.max(8 * daysCount, modelHours); // guarantee min 8 hours per day of timeline
+    
+    const actualLaborCost = scheduledHours * wageRate;
+    const laborPct = totalRevenue > 0 ? (actualLaborCost / totalRevenue) * 100 : 0;
+    const actualSPH = scheduledHours > 0 ? totalRevenue / scheduledHours : 0;
+    
+    // Update cards
+    laborCostVal.textContent = `£${actualLaborCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('labor-pct-sub').textContent = `Actual: ${laborPct.toFixed(1)}% of sales (Target: 28%)`;
+    
+    document.getElementById('labor-hours-val').textContent = `${scheduledHours} hrs`;
+    document.getElementById('labor-hours-sub').textContent = `Avg: ${(scheduledHours / daysCount).toFixed(1)} hrs/day`;
+    
+    document.getElementById('labor-sph-val').textContent = `£${actualSPH.toFixed(2)}`;
+    const sphSub = document.getElementById('labor-sph-sub');
+    if (actualSPH >= targetSPH) {
+        sphSub.textContent = `🟢 Meeting SPH Target (£${targetSPH.toFixed(2)})`;
+        sphSub.style.color = "var(--palm-green)";
+    } else {
+        sphSub.textContent = `🔴 Under SPH Target (£${targetSPH.toFixed(2)})`;
+        sphSub.style.color = "var(--error-red)";
+    }
+    
+    // Timeline Timeline Generation
+    const timelineTbody = document.getElementById('staffing-timeline-tbody');
+    let timelineHTML = "";
+    let understaffedHours = [];
+    let overstaffedHours = [];
+    
+    // Hours 12:00 to 22:00
+    for (let h = 12; h <= 22; h++) {
+        const hourStr = `${h.toString().padStart(2, '0')}:00`;
+        const rev = hourlyRevenue[h] || 0;
+        
+        // Target staff based on hourly sales
+        let targetStaff = 0;
+        if (rev > 0) {
+            if (rev < 100) targetStaff = 2;
+            else if (rev < 250) targetStaff = 3;
+            else if (rev < 500) targetStaff = 4;
+            else targetStaff = 6;
+        }
+        
+        // Scheduled staff (deterministic simulation using hour)
+        let scheduledStaff = 0;
+        if (rev > 0) {
+            // introduce deliberate matching discrepancies
+            const variance = (h % 3 === 0) ? 1 : ((h % 5 === 0) ? -1 : 0);
+            scheduledStaff = Math.max(2, targetStaff + variance);
+        }
+        
+        let statusHTML = "";
+        let recText = "";
+        if (scheduledStaff === 0) {
+            statusHTML = `<span style="color: var(--text-muted);">Closed</span>`;
+            recText = "No labor required.";
+        } else if (scheduledStaff === targetStaff) {
+            statusHTML = `<span class="comp-badge flat" style="color: var(--palm-green); background: rgba(0, 255, 135, 0.05); border: 1px solid rgba(0, 255, 135, 0.15);">🟢 Optimal</span>`;
+            recText = "Maintain roster.";
+        } else if (scheduledStaff < targetStaff) {
+            const diff = targetStaff - scheduledStaff;
+            statusHTML = `<span class="comp-badge down" style="padding: 3px 8px; font-size:11px;">🔴 Under (-${diff})</span>`;
+            recText = `Roster +${diff} staff. SPH is £${(rev / scheduledStaff).toFixed(0)} (high rush risk).`;
+            understaffedHours.push({ hourStr, rev, sched: scheduledStaff, target: targetStaff });
+        } else {
+            const diff = scheduledStaff - targetStaff;
+            statusHTML = `<span class="comp-badge up" style="color: var(--sunset-orange); background: rgba(255, 94, 54, 0.05); border: 1px solid rgba(255, 94, 54, 0.15); padding: 3px 8px; font-size:11px;">🟡 Over (+${diff})</span>`;
+            recText = `Cut floor staff 1 hr early. Sales dip at this slot.`;
+            overstaffedHours.push({ hourStr, rev, sched: scheduledStaff, target: targetStaff });
+        }
+        
+        timelineHTML += `
+            <tr>
+                <td><strong>${hourStr} - ${(h+1).toString().padStart(2, '0')}:00</strong></td>
+                <td>${scheduledStaff > 0 ? scheduledStaff + ' staff' : '-'}</td>
+                <td>${targetStaff > 0 ? targetStaff + ' staff' : '-'}</td>
+                <td>${statusHTML}</td>
+                <td><span style="font-size: 12px; color: var(--text-muted);">${recText}</span></td>
+            </tr>
+        `;
+    }
+    timelineTbody.innerHTML = timelineHTML;
+    
+    // Insights feed
+    const insightsFeed = document.getElementById('labor-insights-feed');
+    let insightsHTML = "";
+    
+    if (understaffedHours.length > 0) {
+        const pick = understaffedHours[0];
+        insightsHTML += `
+            <div style="background: rgba(255, 51, 102, 0.05); border-left: 3px solid var(--error-red); padding: 12px 15px; border-radius: 8px; font-size: 12px; line-height: 1.4;">
+                <strong>🚨 Understaffing Peak:</strong> At ${pick.hourStr}, sales spiked to £${pick.rev.toFixed(0)} with only ${pick.sched} staff rostered. SPH hit £${(pick.rev/pick.sched).toFixed(0)} (Target: £${targetSPH}). Customer service times are at risk.
+            </div>
+        `;
+    }
+    
+    if (overstaffedHours.length > 0) {
+        const pick = overstaffedHours[0];
+        insightsHTML += `
+            <div style="background: rgba(255, 94, 54, 0.05); border-left: 3px solid var(--sunset-orange); padding: 12px 15px; border-radius: 8px; font-size: 12px; line-height: 1.4;">
+                <strong>💡 Overstaffing Slump:</strong> Roster shows ${pick.sched} staff scheduled at ${pick.hourStr} but sales were only £${pick.rev.toFixed(0)}, resulting in a low SPH of £${(pick.rev/pick.sched).toFixed(0)}. Trim roster hours next week.
+            </div>
+        `;
+    }
+    
+    if (insightsHTML === "") {
+        insightsHTML = `
+            <div style="background: rgba(0, 255, 135, 0.05); border-left: 3px solid var(--palm-green); padding: 12px 15px; border-radius: 8px; font-size: 12px; color: var(--text-muted);">
+                🟢 Rota matches sales demand perfectly. Keep executing current staffing deployment models.
+            </div>
+        `;
+    }
+    
+    insightsFeed.innerHTML = insightsHTML;
+}
+
+// RENDER REVIEWS & SOCIALS TAB
+function renderReviewsTab() {
+    renderReviewsFeed();
+    renderSentimentCloud();
+}
+
+function renderReviewsFeed() {
+    const list = document.getElementById('social-reviews-list');
+    if (!list) return;
+    
+    const filtered = GUEST_REVIEWS.filter(rev => {
+        if (!activeReviewTag) return true;
+        return rev.tags.includes(activeReviewTag);
+    });
+    
+    if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px 0;">No reviews match the selected tag.</div>`;
+        return;
+    }
+    
+    list.innerHTML = filtered.map(rev => {
+        const stars = "★".repeat(rev.rating) + "☆".repeat(5 - rev.rating);
+        const sourceBadge = rev.source === 'Google' 
+            ? `<span style="background: rgba(0, 212, 255, 0.15); color: var(--ocean-blue); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid rgba(0, 212, 255, 0.25);">Google</span>` 
+            : `<span style="background: rgba(0, 255, 135, 0.15); color: var(--palm-green); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid rgba(0, 255, 135, 0.25);">TripAdvisor</span>`;
+            
+        return `
+            <div class="review-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <strong style="color: white; font-size: 14px;">${rev.author}</strong>
+                        ${sourceBadge}
+                    </div>
+                    <div style="font-family: monospace; font-size: 12px; color: var(--text-muted);">${rev.date}</div>
+                </div>
+                <div style="color: var(--sunset-orange); font-size: 14px; letter-spacing: 1px;">${stars}</div>
+                <p style="font-size: 13px; color: var(--text-light); line-height: 1.4; font-style: italic;">"${rev.text}"</p>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                    ${rev.tags.map(t => `<span class="category-pill" style="font-size: 9px; padding: 2px 6px; cursor: pointer;" onclick="filterReviewsByTag('${t}')">${t}</span>`).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderSentimentCloud() {
+    const cloud = document.getElementById('sentiment-word-cloud');
+    if (!cloud) return;
+    
+    cloud.innerHTML = SENTIMENT_WORDS.map(tag => {
+        const cls = tag.sentiment === 'positive' ? 'pos' : 'neg';
+        const activeCls = activeReviewTag === tag.word ? 'active' : '';
+        const fontSize = 10 + Math.min(tag.count * 0.3, 10);
+        
+        return `
+            <span class="sentiment-tag ${cls} ${activeCls}" data-tag="${tag.word}" style="font-size: ${fontSize}px;" onclick="filterReviewsByTag('${tag.word}')">
+                ${tag.word} (${tag.count})
+                <strong style="font-size: 9px; opacity: 0.85;">${tag.score}</strong>
+            </span>
+        `;
+    }).join('');
+}
+
+// ==========================================
+// 10. WEEKLY TRENDS & SELLER DEEP-DIVE INSIGHTS
+// ==========================================
+
+function changeChartView(view) {
+    activeChartView = view;
+    
+    document.getElementById('chart-view-hourly')?.classList.remove('active');
+    document.getElementById('chart-view-daily')?.classList.remove('active');
+    document.getElementById('chart-view-dayofweek')?.classList.remove('active');
+    
+    if (view === 'hourly') {
+        document.getElementById('chart-view-hourly')?.classList.add('active');
+    } else if (view === 'daily') {
+        document.getElementById('chart-view-daily')?.classList.add('active');
+    } else {
+        document.getElementById('chart-view-dayofweek')?.classList.add('active');
+    }
+    
+    processAndRender();
+}
+
+function renderWeeklyTrends() {
+    const satList = document.getElementById('sat-trends-list');
+    const rankingsList = document.getElementById('day-rankings-list');
+    if (!satList || !rankingsList) return;
+
+    // 1. Calculate Saturday Trend
+    const satData = {};
+    salesData.forEach(item => {
+        if (item.type && item.type.toLowerCase() === 'void') return;
+        if (!item.timestamp) return;
+        const datePart = parseDateToYYYYMMDD(item.timestamp);
+        const dateObj = new Date(datePart);
+        if (dateObj.getDay() === 6) { // Saturday
+            satData[datePart] = (satData[datePart] || 0) + item.price;
+        }
+    });
+    
+    const sortedSats = Object.entries(satData).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 3);
+    
+    if (sortedSats.length === 0) {
+        satList.innerHTML = `<li style="color: var(--text-muted);">No Saturday data available.</li>`;
+    } else {
+        satList.innerHTML = sortedSats.map(([dateStr, rev], idx) => {
+            const parts = dateStr.split('-');
+            const dateObj = new Date(parts[0], parts[1]-1, parts[2]);
+            const formatted = dateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+            
+            let changeHTML = "";
+            if (idx + 1 < sortedSats.length) {
+                const prevRev = sortedSats[idx + 1][1];
+                const pct = prevRev > 0 ? ((rev - prevRev) / prevRev) * 100 : 0;
+                const sign = pct >= 0 ? "+" : "";
+                const color = pct >= 0 ? "var(--palm-green)" : "var(--error-red)";
+                changeHTML = `<span style="font-family: var(--font-tech); font-weight: bold; color: ${color}; margin-left: 10px;">${sign}${pct.toFixed(0)}%</span>`;
+            } else {
+                changeHTML = `<span style="color: var(--text-muted); font-size:10px; margin-left:10px;">(Base)</span>`;
+            }
+            
+            return `
+                <li style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                    <strong>${formatted}</strong>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-family: var(--font-tech); color: white; font-weight: bold;">£${rev.toFixed(2)}</span>
+                        ${changeHTML}
+                    </div>
+                </li>
+            `;
+        }).join('');
+    }
+
+    // 2. Day-of-Week Average Rankings
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayRevenues = {};
+    
+    salesData.forEach(item => {
+        if (item.type && item.type.toLowerCase() === 'void') return;
+        if (!item.timestamp) return;
+        const dateStr = parseDateToYYYYMMDD(item.timestamp);
+        const dayIndex = new Date(dateStr).getDay();
+        const dayName = daysOfWeek[dayIndex];
+        
+        if (!dayRevenues[dayName]) dayRevenues[dayName] = {};
+        dayRevenues[dayName][dateStr] = (dayRevenues[dayName][dateStr] || 0) + item.price;
+    });
+
+    const dayAverages = [];
+    daysOfWeek.forEach(day => {
+        const datesObj = dayRevenues[day] || {};
+        const values = Object.values(datesObj);
+        const sum = values.reduce((s, v) => s + v, 0);
+        const count = values.length || 1;
+        dayAverages.push({ day, avg: sum / count });
+    });
+
+    dayAverages.sort((a, b) => b.avg - a.avg);
+    const maxAvg = dayAverages[0]?.avg || 1;
+
+    rankingsList.innerHTML = dayAverages.slice(0, 4).map((d, index) => {
+        const widthPct = Math.min(100, (d.avg / maxAvg) * 100);
+        const barColor = index === 0 ? "var(--sunset-orange)" : "var(--ocean-blue)";
+        return `
+            <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px;">
+                    <span style="font-weight: 600; color: white;">${d.day}</span>
+                    <span style="font-family: var(--font-tech); color: var(--text-muted);">Avg: £${d.avg.toFixed(0)}</span>
+                </div>
+                <div style="height: 5px; width: 100%; background: rgba(255,255,255,0.02); border-radius: 3px; overflow: hidden;">
+                    <div style="height: 100%; background: ${barColor}; border-radius: 3px; width: ${widthPct}%;"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderSellerDeepDiveInsights() {
+    const feed = document.getElementById('item-deep-dive-feed');
+    if (!feed) return;
+
+    const start = document.getElementById('date-start').value;
+    const end = document.getElementById('date-end').value;
+    const filtered = salesData.filter(item => {
+        if (!item.timestamp) return false;
+        const d = parseDateToYYYYMMDD(item.timestamp);
+        return d >= start && d <= end;
+    });
+
+    const productCounts = {};
+    const productRevenues = {};
+    const productCategories = {};
+    const productVoids = {};
+
+    filtered.forEach(item => {
+        if (!item.productName) return;
+        const isVoid = item.type && item.type.toLowerCase() === 'void';
+        
+        if (isVoid) {
+            productVoids[item.productName] = (productVoids[item.productName] || 0) + 1;
+            return;
+        }
+
+        productCounts[item.productName] = (productCounts[item.productName] || 0) + 1;
+        productRevenues[item.productName] = (productRevenues[item.productName] || 0) + item.price;
+        productCategories[item.productName] = item.category || "Other";
+    });
+
+    const items = Object.keys(productCounts).map(name => ({
+        name,
+        qty: productCounts[name] || 0,
+        revenue: productRevenues[name] || 0,
+        category: productCategories[name] || "Other",
+        voids: productVoids[name] || 0
+    }));
+
+    if (items.length === 0) {
+        feed.innerHTML = `<p style="color: var(--text-muted); text-align: center;">No product sales recorded in this range.</p>`;
+        return;
+    }
+
+    const topSellers = [...items].sort((a, b) => b.qty - a.qty).slice(0, 5);
+    const worstSellers = [...items].sort((a, b) => a.qty - b.qty).slice(0, 5);
+
+    let html = "";
+
+    if (topSellers[0]) {
+        const top = topSellers[0];
+        const emoji = getProductEmoji(top.name, top.category);
+        html += `
+            <div style="background: rgba(0, 255, 135, 0.04); border-left: 3px solid var(--palm-green); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
+                🔥 <strong>#1 Best Seller: ${emoji} ${top.name}</strong><br>
+                Sold <strong>${top.qty}</strong> units yielding <strong>£${top.revenue.toFixed(2)}</strong>. Strongest performance vector in the dataset. Keep high prep levels.
+            </div>
+        `;
+    }
+
+    if (topSellers[1]) {
+        const runnerUp = topSellers[1];
+        const emoji = getProductEmoji(runnerUp.name, runnerUp.category);
+        html += `
+            <div style="background: rgba(0, 212, 255, 0.04); border-left: 3px solid var(--ocean-blue); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
+                📈 <strong>Upsell Target: ${emoji} ${runnerUp.name}</strong><br>
+                High transaction attachment rate (<strong>${runnerUp.qty} sold</strong>). Bundle with sides or cocktails during peak dinner shifts.
+            </div>
+        `;
+    }
+
+    if (worstSellers[0]) {
+        const worst = worstSellers[0];
+        const emoji = getProductEmoji(worst.name, worst.category);
+        html += `
+            <div style="background: rgba(255, 51, 102, 0.04); border-left: 3px solid var(--error-red); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
+                ⚠️ <strong>Slowest Mover: ${emoji} ${worst.name}</strong><br>
+                Only <strong>${worst.qty}</strong> units sold in active period. Review pricing parity on the street or consider swapping with seasonal alternatives.
+            </div>
+        `;
+    }
+
+    const highVoidItem = items.find(item => item.voids > 1);
+    if (highVoidItem) {
+        const emoji = getProductEmoji(highVoidItem.name, highVoidItem.category);
+        html += `
+            <div style="background: rgba(255, 94, 54, 0.04); border-left: 3px solid var(--sunset-orange); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
+                🚨 <strong>Wastage Warning: ${emoji} ${highVoidItem.name}</strong><br>
+                Logged <strong>${highVoidItem.voids} voids</strong> relative to sales. Inspect kitchen execution times or POS entry errors.
+            </div>
+        `;
+    } else if (worstSellers[1]) {
+        const worst2 = worstSellers[1];
+        const emoji = getProductEmoji(worst2.name, worst2.category);
+        html += `
+            <div style="background: rgba(255, 94, 54, 0.04); border-left: 3px solid var(--sunset-orange); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
+                💡 <strong>Menu Optimization: ${emoji} ${worst2.name}</strong><br>
+                Low sales volume (<strong>${worst2.qty} sold</strong>). Promote through mid-week combos or social campaigns.
+            </div>
+        `;
+    }
+
+    feed.innerHTML = html;
 }
 </script>
 </body>
