@@ -327,6 +327,7 @@
 
             try {
                 const response = await fetch(`${SHEET_CSV_URL}&t=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const csvText = await response.text();
                 parseCSV(csvText);
                 
@@ -493,6 +494,7 @@
             
             try {
                 const response = await fetch(`${SHEET_CSV_URL}&t=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const csvText = await response.text();
                 parseCSV(csvText);
                 
@@ -950,7 +952,7 @@
             
             // New Integration Dashboards
             activeFilteredSales = filteredSales;
-            // renderStaffingTab(totalRevenue, hourlyRevenue);
+            renderStaffingTab(totalRevenue, hourlyRevenue);
             renderReviewsTab();
             
             // New Weekly Trends & Seller Deep-Dives
@@ -2380,6 +2382,21 @@ function filterReviewsByTag(tag) {
     } else {
         activeReviewTag = tag;
     }
+    const indicator = document.getElementById('cloud-filter-indicator');
+    const tagName = document.getElementById('active-tag-name');
+    if (activeReviewTag) {
+        if (indicator) indicator.classList.remove('hidden');
+        if (tagName) tagName.textContent = activeReviewTag;
+    } else {
+        if (indicator) indicator.classList.add('hidden');
+    }
+    renderReviewsTab();
+}
+
+function clearCloudFilter() {
+    activeReviewTag = null;
+    const indicator = document.getElementById('cloud-filter-indicator');
+    if (indicator) indicator.classList.add('hidden');
     renderReviewsTab();
 }
 

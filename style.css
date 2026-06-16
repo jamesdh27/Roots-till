@@ -1075,3 +1075,154 @@
         .review-card:hover {
             border-color: rgba(255, 94, 54, 0.15);
         }
+
+        /* Missing Classes added in Phase 1 Audit Fixes */
+        .large-card, .small-card, .data-card {
+            background: var(--card-dark);
+            padding: 25px 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+        .large-card:hover, .small-card:hover, .data-card:hover {
+            background: var(--card-hover);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+        .large-card h3, .small-card h3, .data-card h3 {
+            font-size: 16px;
+            color: var(--sunset-orange);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: var(--font-tech);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .tab-btn.active {
+            color: white;
+            background: rgba(255, 94, 54, 0.15);
+            border: 1px solid rgba(255, 94, 54, 0.3);
+        }
+        .product-ranking-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+        }
+        .product-ranking-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            transition: all 0.2s ease;
+        }
+        .product-ranking-list li:hover {
+            border-color: rgba(255, 94, 54, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .offline-alert-container {
+            background: rgba(217, 4, 41, 0.1);
+            border: 1px solid rgba(217, 4, 41, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            backdrop-filter: blur(8px);
+        }
+        .offline-alert-text h4 {
+            color: var(--error-red);
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        .offline-alert-text p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .offline-alert-btn {
+            background: var(--error-red);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(217, 4, 41, 0.2);
+        }
+        .offline-alert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(217, 4, 41, 0.35);
+        }
+        .empty-state-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 9, 11, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+            z-index: 10;
+        }
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .text-palm-green {
+            color: var(--palm-green) !important;
+        }
+        .text-error-red {
+            color: var(--error-red) !important;
+        }
+        .compare-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            user-select: none;
+        }
+        .loading-pulse {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        .spinning-icon {
+            animation: spin 1s infinite linear;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
