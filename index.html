@@ -2680,6 +2680,9 @@
             let curVoids = 0;
             let curVoidCount = 0;
             let curCatCounts = {};
+            let curDaypartRev = { "Lunch": 0, "Dinner": 0, "Late Night": 0 };
+            let curWeatherRev = {};
+            let curDayOfWeekRev = Array(7).fill(0);
             
             currentSales.forEach(item => {
                 if (item.type && item.type.toLowerCase() === 'void') {
@@ -2692,12 +2695,28 @@
                 if (item.category) {
                     curCatCounts[item.category] = (curCatCounts[item.category] || 0) + item.price;
                 }
+                
+                // Daypart Rev
+                const dp = getDaypart(item.timestamp);
+                curDaypartRev[dp] = (curDaypartRev[dp] || 0) + item.price;
+                
+                // Weather Rev
+                if (item.timestamp) {
+                    const datePart = item.timestamp.split(' ')[0];
+                    const w = getWeatherForDate(datePart);
+                    curWeatherRev[w] = (curWeatherRev[w] || 0) + item.price;
+                    
+                    const dateObj = new Date(datePart);
+                    const day = dateObj.getDay();
+                    curDayOfWeekRev[day] += item.price;
+                }
             });
             
             // Calculate previous stats
             let prevRev = 0;
             let prevCount = 0;
             let prevCatCounts = {};
+            let prevDaypartRev = { "Lunch": 0, "Dinner": 0, "Late Night": 0 };
             
             previousSales.forEach(item => {
                 if (item.type && item.type.toLowerCase() === 'void') return;
@@ -2706,6 +2725,9 @@
                 if (item.category) {
                     prevCatCounts[item.category] = (prevCatCounts[item.category] || 0) + item.price;
                 }
+                
+                const dp = getDaypart(item.timestamp);
+                prevDaypartRev[dp] = (prevDaypartRev[dp] || 0) + item.price;
             });
             
             if (prevRev === 0) {
@@ -2724,10 +2746,14 @@
             const growthColorClass = revDiff >= 0 ? "text-palm-green" : "text-error-red";
             const growthSymbol = revDiff >= 0 ? "📈" : "📉";
             
+            const curAOV = curCount > 0 ? curRev / curCount : 0;
+            const prevAOV = prevCount > 0 ? prevRev / prevCount : 0;
+            const aovPctChange = prevAOV > 0 ? (((curAOV - prevAOV) / prevAOV) * 100).toFixed(1) : 0;
+            
             insights.push(`
                 <li>
                     <strong>${growthSymbol} Revenue Momentum:</strong> 
-                    Your net till sales show a <span class="${growthColorClass}"><strong>${Math.abs(revPct)}% ${growthDir}</strong></span> compared to the preceding period (representing an absolute revenue shift of <strong>£${Math.abs(revDiff).toFixed(2)}</strong>). This was accompanied by a <strong>${Math.abs(countPct)}% ${countDiff >= 0 ? 'increase' : 'decrease'}</strong> in volume of sales transactions.
+                    Net sales show a <span class="${growthColorClass}"><strong>${Math.abs(revPct)}% ${growthDir}</strong></span> shift (absolute shift of <strong>£${Math.abs(revDiff).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</strong>) WoW. Transaction volume changed by <strong>${Math.abs(countPct)}%</strong> while Average Ticket Size (AOV) shifted by <strong>${aovPctChange}%</strong> to <strong>£${curAOV.toFixed(2)}</strong>.
                 </li>
             `);
             
@@ -2744,69 +2770,162 @@
             const topGrowth = catDiffs[0];
             const topDecline = catDiffs[catDiffs.length - 1];
             
+            function getCategoryEmoji(catName) {
+                const c = catName.toLowerCase();
+                if (c.includes("cocktail") || c.includes("rum")) return "🍹";
+                if (c.includes("beer") || c.includes("draught") || c.includes("bottle")) return "🍺";
+                if (c.includes("classic") || c.includes("mains") || c.includes("pit") || c.includes("pot")) return "🍗";
+                if (c.includes("bite") || c.includes("appetizer") || c.includes("fixin") || c.includes("fry")) return "🍟";
+                return "📊";
+            }
+            
             if (topGrowth && topGrowth.diff > 0) {
                 const growthRatio = topGrowth.prev > 0 ? ((topGrowth.diff / topGrowth.prev) * 100).toFixed(0) : 100;
+                const emoji = getCategoryEmoji(topGrowth.category);
                 insights.push(`
                     <li>
-                        <strong>🍹 Primary Driver:</strong> 
-                        The largest growth sector is <span class="text-palm-green"><strong>${topGrowth.category}</strong></span>, which grew by <strong>£${topGrowth.diff.toFixed(2)}</strong> (a <strong>${growthRatio}%</strong> increase). Ensure bar/kitchen supplies are stocked to match this volume shift.
+                        <strong>${emoji} Primary Driver:</strong> 
+                        The fastest growing category is <span class="text-palm-green"><strong>${topGrowth.category}</strong></span>, which grew by <strong>£${topGrowth.diff.toFixed(2)}</strong> (+<strong>${growthRatio}%</strong>). Ensure inventory levels match this rising demand.
                     </li>
                 `);
             }
             
             if (topDecline && topDecline.diff < 0) {
+                const emoji = getCategoryEmoji(topDecline.category);
                 insights.push(`
                     <li>
-                        <strong>⚠️ Category Performance Drag:</strong> 
-                        Sales in <span class="text-error-red"><strong>${topDecline.category}</strong></span> dropped by <strong>£${Math.abs(topDecline.diff).toFixed(2)}</strong>. Review pricing strategy or consider marketing promotions to reverse this decline.
+                        <strong>⚠️ Category Drag:</strong> 
+                        Sales in <span class="text-error-red"><strong>${topDecline.category}</strong></span> decreased by <strong>£${Math.abs(topDecline.diff).toFixed(2)}</strong>. Evaluate menu positioning or run a target promo to reverse this trend.
                     </li>
                 `);
             }
             
-            // 3. Voids analysis
+            // 3. Voids analysis (Celebratory state when voids = 0)
             const voidPct = curRev > 0 ? ((curVoids / (curRev + curVoids)) * 100).toFixed(1) : 0;
             if (voidPct > 3) {
                 insights.push(`
                     <li>
                         <strong>🚨 Void Leakage Alert:</strong> 
-                        Voids represent <span class="text-error-red"><strong>${voidPct}%</strong></span> of your gross sales (<strong>£${curVoids.toFixed(2)}</strong> across <strong>${curVoidCount}</strong> voided entries). High voids indicate ordering mistakes or kitchen bottlenecks. Review staff order-confirmation habits.
+                        Voids represent <span class="text-error-red"><strong>${voidPct}%</strong></span> of gross sales (<strong>£${curVoids.toFixed(2)}</strong> across <strong>${curVoidCount}</strong> voided entries). This exceeds the 3% target, signaling staff order-entry error or kitchen delays.
                     </li>
                 `);
             } else if (voidPct > 0) {
                 insights.push(`
                     <li>
                         <strong>🔒 Voids & Wastage:</strong> 
-                        Voids are currently under control at <strong>${voidPct}%</strong> of gross sales (<strong>£${curVoids.toFixed(2)}</strong>), which is within normal operating limits (under 3%).
+                        Voids are stable at <strong>${voidPct}%</strong> of sales (<strong>£${curVoids.toFixed(2)}</strong>), keeping within your standard <3% target threshold.
+                    </li>
+                `);
+            } else {
+                insights.push(`
+                    <li>
+                        <strong>🎉 Perfect Order Accuracy:</strong> 
+                        Outstanding execution! <strong>0% voids or wastage</strong> recorded in this period. Staff order accuracy and kitchen compliance are operating at a perfect 100%.
                     </li>
                 `);
             }
             
-            // 4. AOV analysis
-            const curAOV = curCount > 0 ? curRev / curCount : 0;
-            const prevAOV = prevCount > 0 ? prevRev / prevCount : 0;
-            const aovDiff = curAOV - prevAOV;
-            if (aovDiff > 0.50) {
+            // 4. Daypart growth analysis
+            let dpDiffs = [];
+            Object.keys(curDaypartRev).forEach(dp => {
+                const cur = curDaypartRev[dp] || 0;
+                const prev = prevDaypartRev[dp] || 0;
+                dpDiffs.push({ daypart: dp, diff: cur - prev, cur, prev });
+            });
+            dpDiffs.sort((a, b) => b.diff - a.diff);
+            const bestDp = dpDiffs[0];
+            if (bestDp && bestDp.diff > 10) {
+                const pct = bestDp.prev > 0 ? ((bestDp.diff / bestDp.prev) * 100).toFixed(0) : 100;
                 insights.push(`
                     <li>
-                        <strong>💸 Ticket Value (AOV):</strong> 
-                        Your average ticket size increased to <strong>£${curAOV.toFixed(2)}</strong> (up <strong>£${aovDiff.toFixed(2)}</strong>). Customers are buying higher-value items or ordering more per check. Promote premium sides to maintain this momentum.
+                        <strong>🕒 Shift Performance:</strong> 
+                        The <span class="text-palm-green"><strong>${bestDp.daypart}</strong></span> shift experienced the strongest surge, rising by <strong>£${bestDp.diff.toFixed(2)}</strong> (+<strong>${pct}%</strong>) WoW. Align floor staffing levels to match this busy window.
                     </li>
                 `);
-            } else if (aovDiff < -0.50) {
+            }
+            
+            // 5. Dynamic Weather Analysis
+            const weatherSales = {};
+            const weatherDays = {};
+            currentSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+                if (!item.timestamp) return;
+                const datePart = item.timestamp.split(' ')[0];
+                const w = getWeatherForDate(datePart);
+                weatherSales[w] = (weatherSales[w] || 0) + item.price;
+                if (!weatherDays[w]) weatherDays[w] = new Set();
+                weatherDays[w].add(datePart);
+            });
+            
+            let weatherInsights = [];
+            Object.keys(weatherSales).forEach(w => {
+                const daysCount = weatherDays[w].size;
+                if (daysCount > 0) {
+                    const avg = weatherSales[w] / daysCount;
+                    weatherInsights.push({ weather: w, avg, total: weatherSales[w], days: daysCount });
+                }
+            });
+            
+            if (weatherInsights.length > 1) {
+                weatherInsights.sort((a, b) => b.avg - a.avg);
+                const bestWeather = weatherInsights[0];
+                const worstWeather = weatherInsights[weatherInsights.length - 1];
+                const diffPct = (((bestWeather.avg - worstWeather.avg) / worstWeather.avg) * 100).toFixed(0);
+                
+                const weatherEmojis = { "Warm": "☀️", "Moderate": "⛅", "Rainy": "🌧️", "Cold": "❄️" };
+                const bestEmoji = weatherEmojis[bestWeather.weather] || "🌤️";
+                const worstEmoji = weatherEmojis[worstWeather.weather] || "🌤️";
+                
                 insights.push(`
                     <li>
-                        <strong>🏷️ Ticket Value Shift:</strong> 
-                        Your average ticket size dropped to <strong>£${curAOV.toFixed(2)}</strong> (down <strong>£${Math.abs(aovDiff).toFixed(2)}</strong>). Try upselling starters or rum pairings to boost average check size.
-            </li>
-        `);
-    }
-    
-    return `
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 15px; font-size: 14px; line-height: 1.5;">
-            ${insights.join('')}
-        </ul>
-    `;
-}
+                        <strong>${bestEmoji} Weather Correlation:</strong> 
+                        Daily revenue peaked during <strong>${bestWeather.weather}</strong> conditions, averaging <strong>£${bestWeather.avg.toFixed(2)}/day</strong>. This is <strong>${diffPct}% higher</strong> than under <strong>${worstWeather.weather}</strong> conditions (${worstEmoji} <strong>£${worstWeather.avg.toFixed(2)}/day</strong> average). 
+                        ${worstWeather.weather === "Rainy" ? "<em>Tip:</em> Push delivery promotions when rain is forecasted to offset lower dining room traffic." : ""}
+                    </li>
+                `);
+            }
+            
+            // 6. Weakest Day of Week
+            let dayAverages = [];
+            const daysNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            
+            const uniqueDatesPerDay = Array(7).fill(0).map(() => new Set());
+            currentSales.forEach(item => {
+                if (item.type && item.type.toLowerCase() === 'void') return;
+                if (!item.timestamp) return;
+                const datePart = item.timestamp.split(' ')[0];
+                const dObj = new Date(datePart);
+                const dayIdx = dObj.getDay();
+                uniqueDatesPerDay[dayIdx].add(datePart);
+            });
+            
+            for (let i = 0; i < 7; i++) {
+                const numDays = uniqueDatesPerDay[i].size;
+                if (numDays > 0) {
+                    const totalForDay = curDayOfWeekRev[i];
+                    dayAverages.push({ dayIndex: i, name: daysNames[i], avg: totalForDay / numDays, total: totalForDay });
+                }
+            }
+            
+            if (dayAverages.length > 2) {
+                dayAverages.sort((a, b) => a.avg - b.avg);
+                const weakest = dayAverages[0];
+                if (weakest.avg < 300) {
+                    insights.push(`
+                        <li>
+                            <strong>📅 Weekly Traffic Dip:</strong> 
+                            <strong>${weakest.name}</strong> is currently your slowest day, averaging <strong>£${weakest.avg.toFixed(2)}/day</strong>. Consider introducing a targeted mid-week promo to boost traffic.
+                        </li>
+                    `);
+                }
+            }
+            
+            return `
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 15px; font-size: 14px; line-height: 1.5;">
+                    ${insights.join('')}
+                </ul>
+            `;
+        }
 
 // ==========================================
 // 7. RENDER MODULES (CHARTS, TABLES & VIEWS)
@@ -3502,52 +3621,91 @@ function generatePricingRecommendations(filteredSales) {
         }
     });
     
+    // Sort sales to identify top sellers
+    const sortedProductSales = Object.keys(productSalesCounts).map(name => ({
+        name,
+        count: productSalesCounts[name]
+    })).sort((a, b) => b.count - a.count);
+    
+    const topSellersNames = sortedProductSales.slice(0, 3).map(x => x.name);
+    
     let recs = [];
     
     COMPETITOR_MENUS.forEach(item => {
         const comps = [item.larkins, item.piper, item.boardwalk, item.xanadu].filter(v => v !== null && v !== undefined);
+        if (comps.length === 0) return;
         const streetAvg = comps.reduce((sum, v) => sum + v, 0) / comps.length;
+        const salesCount = productSalesCounts[item.name] || 0;
         
-        // Roots is cheaper than street average -> recommend price hike
-        if (item.roots < streetAvg) {
-            const salesCount = productSalesCounts[item.name] || 0;
-            if (salesCount > 0) {
-                const newPrice = Math.floor(streetAvg * 10) / 10 + 0.95; // e.g. round to xx.95
+        if (salesCount > 0) {
+            // Roots is cheaper than street average -> recommend price hike
+            if (item.roots < streetAvg) {
+                // Smart pricing formula ending in .45 or .95
+                let newPrice = Math.ceil(streetAvg * 2) / 2 - 0.05;
+                
+                // Clamp target price to max 15% increase to keep recommendations realistic
+                const maxPrice = item.roots * 1.15;
+                if (newPrice > maxPrice) {
+                    newPrice = Math.round(maxPrice * 2) / 2 - 0.05;
+                    // Ensure newPrice is still higher than current roots price
+                    if (newPrice <= item.roots) {
+                        newPrice = item.roots + 0.50; // simple fallback increment
+                    }
+                }
+                
                 const diff = newPrice - item.roots;
-                if (diff > 0.10) {
+                if (diff > 0.05) {
                     const rangeProfit = salesCount * diff;
-                    recs.push({
-                        type: "up",
-                        item: item.name,
-                        currentPrice: item.roots,
-                        targetPrice: newPrice,
-                        streetAvg: streetAvg,
-                        sales: salesCount,
-                        profit: rangeProfit,
-                        text: `📈 <strong>Price Optimization:</strong> Raise <strong>${item.name}</strong> from £${item.roots.toFixed(2)} to £${newPrice.toFixed(2)} (Street Avg: £${streetAvg.toFixed(2)}). With <strong>${salesCount}</strong> units sold, this captures <span class="text-palm-green"><strong>+£${rangeProfit.toFixed(2)}</strong></span> extra margin.`
-                    });
+                    const isVolumeLeader = topSellersNames.includes(item.name);
+                    
+                    if (isVolumeLeader) {
+                        recs.push({
+                            type: "volume_up",
+                            item: item.name,
+                            currentPrice: item.roots,
+                            targetPrice: newPrice,
+                            streetAvg: streetAvg,
+                            sales: salesCount,
+                            profit: rangeProfit,
+                            text: `🏆 <strong>Volume Leader Opportunity:</strong> Raise <strong>${item.name}</strong> from £${item.roots.toFixed(2)} to £${newPrice.toFixed(2)} (Street Avg: £${streetAvg.toFixed(2)}). As one of your top sellers (<strong>${salesCount} sold</strong>), this captures <span class="text-palm-green"><strong>+£${rangeProfit.toFixed(2)}</strong></span> in high-probability margin.`
+                        });
+                    } else {
+                        recs.push({
+                            type: "up",
+                            item: item.name,
+                            currentPrice: item.roots,
+                            targetPrice: newPrice,
+                            streetAvg: streetAvg,
+                            sales: salesCount,
+                            profit: rangeProfit,
+                            text: `📈 <strong>Price Optimization:</strong> Raise <strong>${item.name}</strong> from £${item.roots.toFixed(2)} to £${newPrice.toFixed(2)} (Street Avg: £${streetAvg.toFixed(2)}). With <strong>${salesCount}</strong> units sold, this captures <span class="text-palm-green"><strong>+£${rangeProfit.toFixed(2)}</strong></span> extra margin.`
+                        });
+                    }
                 }
             }
-        }
-        
-        // Roots is significantly more expensive than street average -> alert premium risk
-        if (item.roots > streetAvg * 1.15) {
-            const salesCount = productSalesCounts[item.name] || 0;
-            if (salesCount > 0) {
+            
+            // Roots is significantly more expensive than street average -> alert premium risk
+            if (item.roots > streetAvg * 1.12) {
                 recs.push({
                     type: "warning",
                     item: item.name,
                     currentPrice: item.roots,
                     streetAvg: streetAvg,
                     sales: salesCount,
-                    text: `⚠️ <strong>Premium Risk:</strong> <strong>${item.name}</strong> is £${item.roots.toFixed(2)} (<strong>+${((item.roots - streetAvg)/streetAvg*100).toFixed(0)}%</strong> vs. Street Avg £${streetAvg.toFixed(2)}). Ensure high service standard (<strong>${salesCount} sold</strong>).`
+                    text: `⚠️ <strong>Premium Price Risk:</strong> <strong>${item.name}</strong> is £${item.roots.toFixed(2)} (<strong>+${((item.roots - streetAvg)/streetAvg*100).toFixed(0)}%</strong> vs. Street Avg £${streetAvg.toFixed(2)}). Ensure high service standard (<strong>${salesCount} sold</strong>).`
                 });
             }
         }
     });
     
-    // Sort recommendations by profit value (descending)
-    recs.sort((a, b) => (b.profit || 0) - (a.profit || 0));
+    // Sort recommendations: volume_up first, then up (by profit desc), then warnings
+    recs.sort((a, b) => {
+        if (a.type === 'volume_up' && b.type !== 'volume_up') return -1;
+        if (b.type === 'volume_up' && a.type !== 'volume_up') return 1;
+        if ((a.type === 'up' || a.type === 'volume_up') && b.type === 'warning') return -1;
+        if (a.type === 'warning' && (b.type === 'up' || b.type === 'volume_up')) return 1;
+        return (b.profit || 0) - (a.profit || 0);
+    });
     
     if (recs.length === 0) {
         container.innerHTML = `
@@ -3559,8 +3717,15 @@ function generatePricingRecommendations(filteredSales) {
     }
     
     container.innerHTML = recs.slice(0, 3).map(rec => {
-        const borderStyle = rec.type === 'up' ? 'border-left: 3px solid var(--palm-green);' : 'border-left: 3px solid var(--sunset-orange);';
-        const bgStyle = rec.type === 'up' ? 'background: rgba(0, 255, 135, 0.04);' : 'background: rgba(255, 94, 54, 0.04);';
+        let borderStyle = 'border-left: 3px solid var(--sunset-orange);';
+        let bgStyle = 'background: rgba(255, 94, 54, 0.04);';
+        if (rec.type === 'volume_up') {
+            borderStyle = 'border-left: 3px solid var(--palm-green); border-right: 1px solid rgba(0, 255, 135, 0.1); border-top: 1px solid rgba(0, 255, 135, 0.1); border-bottom: 1px solid rgba(0, 255, 135, 0.1);';
+            bgStyle = 'background: rgba(0, 255, 135, 0.06);';
+        } else if (rec.type === 'up') {
+            borderStyle = 'border-left: 3px solid var(--palm-green);';
+            bgStyle = 'background: rgba(0, 255, 135, 0.04);';
+        }
         return `
             <div style="${bgStyle} ${borderStyle} padding: 12px 15px; border-radius: 8px; font-size: 12px; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.02);">
                 ${rec.text}
@@ -3953,11 +4118,16 @@ function renderSellerDeepDiveInsights() {
     const productRevenues = {};
     const productCategories = {};
     const productVoids = {};
+    const productPrices = {};
 
     filtered.forEach(item => {
         if (!item.productName) return;
         const isVoid = item.type && item.type.toLowerCase() === 'void';
         
+        if (!productPrices[item.productName]) {
+            productPrices[item.productName] = item.price;
+        }
+
         if (isVoid) {
             productVoids[item.productName] = (productVoids[item.productName] || 0) + 1;
             return;
@@ -3973,7 +4143,8 @@ function renderSellerDeepDiveInsights() {
         qty: productCounts[name] || 0,
         revenue: productRevenues[name] || 0,
         category: productCategories[name] || "Other",
-        voids: productVoids[name] || 0
+        voids: productVoids[name] || 0,
+        price: productPrices[name] || 0
     }));
 
     if (items.length === 0) {
@@ -3982,7 +4153,12 @@ function renderSellerDeepDiveInsights() {
     }
 
     const topSellers = [...items].sort((a, b) => b.qty - a.qty).slice(0, 5);
-    const worstSellers = [...items].sort((a, b) => a.qty - b.qty).slice(0, 5);
+    
+    // EXCLUDE LOW-VALUE STAPLES (under £4.00) from Slowest Movers to keep insights meaningful
+    const candidatesForSlowest = items.filter(item => item.price >= 4.00);
+    const worstSellers = candidatesForSlowest.length > 0 
+        ? [...candidatesForSlowest].sort((a, b) => a.qty - b.qty).slice(0, 5)
+        : [...items].sort((a, b) => a.qty - b.qty).slice(0, 5);
 
     let html = "";
 
@@ -4011,21 +4187,42 @@ function renderSellerDeepDiveInsights() {
     if (worstSellers[0]) {
         const worst = worstSellers[0];
         const emoji = getProductEmoji(worst.name, worst.category);
+        
+        let slowestMoverAdvice = "";
+        const cat = worst.category.toLowerCase();
+        if (cat.includes("cocktail")) {
+            slowestMoverAdvice = "Promote as a Happy Hour feature or combine into a 2-for-1 menu option.";
+        } else if (cat.includes("draught") || cat.includes("beer") || cat.includes("bottle")) {
+            slowestMoverAdvice = "Run a mid-week burger-and-beer deal or review storage temperatures.";
+        } else if (cat.includes("mains") || cat.includes("pit") || cat.includes("pot") || cat.includes("classic")) {
+            slowestMoverAdvice = "Offer as part of a meal deal combo or audit kitchen execution times.";
+        } else {
+            slowestMoverAdvice = "Review pricing parity on the street or consider swapping with seasonal alternatives.";
+        }
+        
         html += `
             <div style="background: rgba(255, 51, 102, 0.04); border-left: 3px solid var(--error-red); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
                 ⚠️ <strong>Slowest Mover: ${emoji} ${worst.name}</strong><br>
-                Only <strong>${worst.qty}</strong> units sold in active period. Review pricing parity on the street or consider swapping with seasonal alternatives.
+                Only <strong>${worst.qty}</strong> units sold in active period. ${slowestMoverAdvice}
             </div>
         `;
     }
 
-    const highVoidItem = items.find(item => item.voids > 1);
+    // Wastage Warning: Find the item with the highest void ratio (minimum 2 voids)
+    const voidItems = items.filter(item => item.voids >= 2);
+    voidItems.forEach(item => {
+        item.voidRatio = item.voids / (item.qty + item.voids);
+    });
+    voidItems.sort((a, b) => b.voidRatio - a.voidRatio);
+    const highVoidItem = voidItems[0];
+    
     if (highVoidItem) {
         const emoji = getProductEmoji(highVoidItem.name, highVoidItem.category);
+        const voidPct = (highVoidItem.voidRatio * 100).toFixed(0);
         html += `
             <div style="background: rgba(255, 94, 54, 0.04); border-left: 3px solid var(--sunset-orange); padding: 10px 12px; border-radius: 6px; line-height: 1.4;">
                 🚨 <strong>Wastage Warning: ${emoji} ${highVoidItem.name}</strong><br>
-                Logged <strong>${highVoidItem.voids} voids</strong> relative to sales. Inspect kitchen execution times or POS entry errors.
+                Logged <strong>${highVoidItem.voids} voids</strong> relative to sales (<strong>${voidPct}% void-to-sale ratio</strong>). Inspect kitchen prep issues or POS entry compliance.
             </div>
         `;
     } else if (worstSellers[1]) {
