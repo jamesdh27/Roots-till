@@ -86,72 +86,7 @@
             { word: "slow", count: 6, sentiment: "negative", score: "-40%" }
         ];
 
-        // Hull Local Events Dataset
-        const HULL_EVENTS = [
-            {
-                date: "2026-06-14",
-                name: "Newland Avenue Street Festival",
-                location: "Newland Ave (Right outside!)",
-                impact: "Extreme",
-                time: "12:00 - 22:00",
-                description: "Hull's annual Newland Ave street festival with live music, street food, and craft markets. High-density foot traffic is expected right outside Roots Rum Shack.",
-                advice: "Prep: Schedule double staff on floor and bar. Pre-batch Rum Punch and stock up on Red Stripe and Cruz Campo kegs."
-            },
-            {
-                date: "2026-06-18",
-                name: "FIFA World Cup: England vs. USA",
-                location: "Roots Rum Shack & Beer Garden (Screens setup!)",
-                impact: "Extreme",
-                time: "20:00 Kickoff",
-                description: "Massive World Cup Group Stage clash broadcasted live. Huge local interest; Cottingham Road and Newland Ave pubs are expected to be packed.",
-                advice: "Prep: Place extra screens in the beer garden and main lounge. Pre-batch Rum Punch and ensure Red Stripe/Cruz Campo kegs are fully stocked. Roster maximum bar team."
-            },
-            {
-                date: "2026-06-16",
-                name: "Hull KR vs St Helens Super League",
-                location: "Sewell Group Craven Park",
-                impact: "High",
-                time: "19:45 Kickoff",
-                description: "Major mid-week Super League clash. Large crowds will travel along Cottingham Road and Newland Ave pre- and post-match.",
-                advice: "Prep: Anticipate post-match dinner rushes. Ensure kitchen stays open late for takeaway/dine-in orders."
-            },
-            {
-                date: "2026-06-20",
-                name: "Hull FC vs Wigan Warriors Super League",
-                location: "MKM Stadium",
-                impact: "High",
-                time: "15:00 Kickoff",
-                description: "Saturday afternoon game. Supporters will gather at local pubs on Princes and Newland Ave for pre-match drinks.",
-                advice: "Prep: Staff up for early afternoon bar drinks. Promote match-day food platters and beer buckets."
-            },
-            {
-                date: "2026-06-27",
-                name: "Humber Street Sesh 2026",
-                location: "Humber Street / Fruit Market",
-                impact: "Extreme",
-                time: "11:00 - 23:00",
-                description: "Hull's largest music festival showcasing local bands. Draws over 30,000 music fans to the city center and Fruit Market area.",
-                advice: "Prep: Expect city-wide dining surges. Offer festival-themed drinks and fast takeout options."
-            },
-            {
-                date: "2026-07-04",
-                name: "Pride in Hull 2026",
-                location: "Queens Gardens & City Centre",
-                impact: "High",
-                time: "12:00 - 20:00",
-                description: "Annual city-wide celebration starting with a massive parade and transitioning to live stages in the city centre. High foot-fall in surrounding restaurant corridors.",
-                advice: "Prep: Decorate the shack, play upbeat reggae and calypso music, and offer rainbow-themed cocktail specials."
-            },
-            {
-                date: "2026-10-09",
-                name: "Hull Fair 2026",
-                location: "Walton Street Showground",
-                impact: "Extreme",
-                time: "14:00 - 23:00 daily",
-                description: "One of Europe's largest travelling funfairs. Draws hundreds of thousands of people to Hull over 8 days, causing major city-wide traffic and massive food-run surges.",
-                advice: "Prep: Walton Street is close to Newland Ave. Massive evening surges are expected for post-fair food. Ensure plenty of Jerk Chicken is prepped."
-            }
-        ];
+
 
         // Competitor menu items comparison dataset
         const COMPETITOR_MENUS = [
@@ -371,12 +306,8 @@
                         if (grp) grp.value = 'category';
                     } else if (action === 'show_weather') {
                         switchTab('weather-trends');
-                    } else if (action === 'show_events') {
-                        switchTab('local-events');
                     } else if (action === 'show_competitors') {
                         switchTab('competitor-watch');
-                    } else if (action === 'show_staffing') {
-                        switchTab('staffing-hours');
                     } else if (action === 'show_reviews') {
                         switchTab('reviews-socials');
                     } else if (action === 'show_daily_chart') {
@@ -429,8 +360,6 @@
                     loadSampleDataFallback();
                     if (action === 'show_competitors') {
                         switchTab('competitor-watch');
-                    } else if (action === 'show_staffing') {
-                        switchTab('staffing-hours');
                     } else if (action === 'show_reviews') {
                         switchTab('reviews-socials');
                     } else if (action === 'show_products') {
@@ -442,8 +371,6 @@
                         renderExtendedProductTab();
                     } else if (action === 'show_weather') {
                         switchTab('weather-trends');
-                    } else if (action === 'show_events') {
-                        switchTab('local-events');
                     } else if (action === 'show_daily_chart') {
                         switchTab('daily-takings');
                         changeChartView('daily');
@@ -942,7 +869,6 @@
             
             // Inject dynamic Till Intelligence Comparative Insights
             document.getElementById('till-intelligence-body').innerHTML = generateBusinessInsights(filteredSales, prevSales, compareEnabled);
-            renderLocalEventsTab();
             
             // Competitor Watch Sub-module updates
             renderCompetitorComparison();
@@ -952,7 +878,6 @@
             
             // New Integration Dashboards
             activeFilteredSales = filteredSales;
-            renderStaffingTab(totalRevenue, hourlyRevenue);
             renderReviewsTab();
             
             // New Weekly Trends & Seller Deep-Dives
@@ -1042,8 +967,6 @@
             document.getElementById('till-intelligence-body').innerHTML = `
                 <p style="color: var(--text-muted);">No sales data available to compile business intelligence reports.</p>
             `;
-            
-            renderLocalEventsTab();
         }
 
         function hideEmptyStates() {
@@ -1675,7 +1598,6 @@ function renderWeatherTrendsTab(totalRevenue, categoryCounts) {
             <ul class="advice-list">
                 <li>ðŸ“Š <strong>Balanced Sales:</strong> Expect a standard distribution of food and drinks volume.</li>
                 <li>ðŸ— <strong>Jerk Chicken:</strong> Jerk platters and wraps will drive core lunch/dinner revenues.</li>
-                <li>ðŸ—“ï¸ <strong>Event Check:</strong> Cross-reference the Hull Local Events tab for any localized crowds today.</li>
             </ul>
         `;
     }
@@ -1746,67 +1668,7 @@ function renderWeatherTrendsTab(totalRevenue, categoryCounts) {
     `;
 }
 
-// Local Hull Events Tab
-function renderLocalEventsTab() {
-    const listContainer = document.getElementById('events-list-container');
-    const alertBanner = document.getElementById('dashboard-event-alert');
-    const systemToday = getSystemTodayStr();
-    
-    const startDate = parseDateToYYYYMMDD(document.getElementById('date-start').value);
-    const endDate = parseDateToYYYYMMDD(document.getElementById('date-end').value);
-    
-    const rangeEvent = HULL_EVENTS.find(e => {
-        const evDate = parseDateToYYYYMMDD(e.date);
-        return evDate >= startDate && evDate <= endDate;
-    });
-    
-    if (rangeEvent) {
-        alertBanner.classList.remove('hidden');
-        document.getElementById('banner-event-name').textContent = rangeEvent.name;
-        document.getElementById('banner-event-loc').textContent = rangeEvent.location;
-        document.getElementById('banner-event-impact').textContent = `${rangeEvent.impact} Impact`;
-        
-        const impactSpan = document.getElementById('banner-event-impact');
-        impactSpan.className = 'impact-badge';
-        impactSpan.classList.add(`impact-${rangeEvent.impact.toLowerCase()}`);
-    } else {
-        alertBanner.classList.add('hidden');
-    }
-    
-    // Build the list of all events
-    listContainer.innerHTML = HULL_EVENTS.map(event => {
-        const evDate = parseDateToYYYYMMDD(event.date);
-        const isToday = evDate === systemToday;
-        const isSelectedRange = evDate >= startDate && evDate <= endDate;
-        
-        const impactClass = `impact-${event.impact.toLowerCase()}`;
-        const todayAlertTag = isToday ? `<span class="alert-today">ðŸš¨ HAPPENING TODAY</span>` : '';
-        const highlightedClass = isSelectedRange ? 'event-card-highlighted' : '';
-        
-        const dateParts = event.date.split('-');
-        const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-        const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
-        const formattedDate = dateObj.toLocaleDateString('en-GB', options);
-        
-        return `
-            <div class="event-card ${highlightedClass}">
-                <div class="event-card-header">
-                    <div>
-                        <span class="event-date">${formattedDate}</span>
-                        ${todayAlertTag}
-                    </div>
-                    <span class="impact-badge ${impactClass}">${event.impact} Impact</span>
-                </div>
-                <h4 class="event-title">${event.name}</h4>
-                <p class="event-loc">ðŸ“ Location: <strong>${event.location}</strong> | â° Time: <strong>${event.time}</strong></p>
-                <p class="event-desc">${event.description}</p>
-                <div class="event-advice">
-                    <strong>ðŸ’¡ Operations Advice:</strong> ${event.advice}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
+
 
 // ==========================================
 // 7.5 COMPETITOR INTELLIGENCE RENDER FUNCTIONS
@@ -2182,136 +2044,7 @@ function toggleCategoryGroup(groupId) {
     }
 }
 
-// RENDER STAFFING & LABOR TAB
-function renderStaffingTab(totalRevenue, hourlyRevenue) {
-    const laborCostVal = document.getElementById('labor-cost-val');
-    if (!laborCostVal) return;
-    
-    const startDateStr = document.getElementById('date-start').value;
-    const endDateStr = document.getElementById('date-end').value;
-    const daysCount = Math.max(1, Math.round((new Date(endDateStr) - new Date(startDateStr)) / (24 * 3600 * 1000)) + 1);
-    
-    // Average staff hourly wage is Â£11.50
-    const wageRate = 11.50;
-    
-    // Calculate targeted roster hours: Target SPH is Â£45.00/hr
-    const targetSPH = 45.00;
-    const modelHours = Math.round(totalRevenue / targetSPH);
-    const scheduledHours = Math.max(8 * daysCount, modelHours); // guarantee min 8 hours per day of timeline
-    
-    const actualLaborCost = scheduledHours * wageRate;
-    const laborPct = totalRevenue > 0 ? (actualLaborCost / totalRevenue) * 100 : 0;
-    const actualSPH = scheduledHours > 0 ? totalRevenue / scheduledHours : 0;
-    
-    // Update cards
-    laborCostVal.textContent = `Â£${actualLaborCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    document.getElementById('labor-pct-sub').textContent = `Actual: ${laborPct.toFixed(1)}% of sales (Target: 28%)`;
-    
-    document.getElementById('labor-hours-val').textContent = `${scheduledHours} hrs`;
-    document.getElementById('labor-hours-sub').textContent = `Avg: ${(scheduledHours / daysCount).toFixed(1)} hrs/day`;
-    
-    document.getElementById('labor-sph-val').textContent = `Â£${actualSPH.toFixed(2)}`;
-    const sphSub = document.getElementById('labor-sph-sub');
-    if (actualSPH >= targetSPH) {
-        sphSub.textContent = `ðŸŸ¢ Meeting SPH Target (Â£${targetSPH.toFixed(2)})`;
-        sphSub.style.color = "var(--palm-green)";
-    } else {
-        sphSub.textContent = `ðŸ”´ Under SPH Target (Â£${targetSPH.toFixed(2)})`;
-        sphSub.style.color = "var(--error-red)";
-    }
-    
-    // Timeline Timeline Generation
-    const timelineTbody = document.getElementById('staffing-timeline-tbody');
-    let timelineHTML = "";
-    let understaffedHours = [];
-    let overstaffedHours = [];
-    
-    // Hours 12:00 to 22:00
-    for (let h = 12; h <= 22; h++) {
-        const hourStr = `${h.toString().padStart(2, '0')}:00`;
-        const rev = hourlyRevenue[h] || 0;
-        
-        // Target staff based on hourly sales
-        let targetStaff = 0;
-        if (rev > 0) {
-            if (rev < 100) targetStaff = 2;
-            else if (rev < 250) targetStaff = 3;
-            else if (rev < 500) targetStaff = 4;
-            else targetStaff = 6;
-        }
-        
-        // Scheduled staff (deterministic simulation using hour)
-        let scheduledStaff = 0;
-        if (rev > 0) {
-            // introduce deliberate matching discrepancies
-            const variance = (h % 3 === 0) ? 1 : ((h % 5 === 0) ? -1 : 0);
-            scheduledStaff = Math.max(2, targetStaff + variance);
-        }
-        
-        let statusHTML = "";
-        let recText = "";
-        if (scheduledStaff === 0) {
-            statusHTML = `<span style="color: var(--text-muted);">Closed</span>`;
-            recText = "No labor required.";
-        } else if (scheduledStaff === targetStaff) {
-            statusHTML = `<span class="comp-badge flat" style="color: var(--palm-green); background: rgba(0, 255, 135, 0.05); border: 1px solid rgba(0, 255, 135, 0.15);">ðŸŸ¢ Optimal</span>`;
-            recText = "Maintain roster.";
-        } else if (scheduledStaff < targetStaff) {
-            const diff = targetStaff - scheduledStaff;
-            statusHTML = `<span class="comp-badge down" style="padding: 3px 8px; font-size:11px;">ðŸ”´ Under (-${diff})</span>`;
-            recText = `Roster +${diff} staff. SPH is Â£${(rev / scheduledStaff).toFixed(0)} (high rush risk).`;
-            understaffedHours.push({ hourStr, rev, sched: scheduledStaff, target: targetStaff });
-        } else {
-            const diff = scheduledStaff - targetStaff;
-            statusHTML = `<span class="comp-badge up" style="color: var(--sunset-orange); background: rgba(255, 94, 54, 0.05); border: 1px solid rgba(255, 94, 54, 0.15); padding: 3px 8px; font-size:11px;">ðŸŸ¡ Over (+${diff})</span>`;
-            recText = `Cut floor staff 1 hr early. Sales dip at this slot.`;
-            overstaffedHours.push({ hourStr, rev, sched: scheduledStaff, target: targetStaff });
-        }
-        
-        timelineHTML += `
-            <tr>
-                <td><strong>${hourStr} - ${(h+1).toString().padStart(2, '0')}:00</strong></td>
-                <td>${scheduledStaff > 0 ? scheduledStaff + ' staff' : '-'}</td>
-                <td>${targetStaff > 0 ? targetStaff + ' staff' : '-'}</td>
-                <td>${statusHTML}</td>
-                <td><span style="font-size: 12px; color: var(--text-muted);">${recText}</span></td>
-            </tr>
-        `;
-    }
-    timelineTbody.innerHTML = timelineHTML;
-    
-    // Insights feed
-    const insightsFeed = document.getElementById('labor-insights-feed');
-    let insightsHTML = "";
-    
-    if (understaffedHours.length > 0) {
-        const pick = understaffedHours[0];
-        insightsHTML += `
-            <div style="background: rgba(255, 51, 102, 0.05); border-left: 3px solid var(--error-red); padding: 12px 15px; border-radius: 8px; font-size: 12px; line-height: 1.4;">
-                <strong>ðŸš¨ Understaffing Peak:</strong> At ${pick.hourStr}, sales spiked to Â£${pick.rev.toFixed(0)} with only ${pick.sched} staff rostered. SPH hit Â£${(pick.rev/pick.sched).toFixed(0)} (Target: Â£${targetSPH}). Customer service times are at risk.
-            </div>
-        `;
-    }
-    
-    if (overstaffedHours.length > 0) {
-        const pick = overstaffedHours[0];
-        insightsHTML += `
-            <div style="background: rgba(255, 94, 54, 0.05); border-left: 3px solid var(--sunset-orange); padding: 12px 15px; border-radius: 8px; font-size: 12px; line-height: 1.4;">
-                <strong>ðŸ’¡ Overstaffing Slump:</strong> Roster shows ${pick.sched} staff scheduled at ${pick.hourStr} but sales were only Â£${pick.rev.toFixed(0)}, resulting in a low SPH of Â£${(pick.rev/pick.sched).toFixed(0)}. Trim roster hours next week.
-            </div>
-        `;
-    }
-    
-    if (insightsHTML === "") {
-        insightsHTML = `
-            <div style="background: rgba(0, 255, 135, 0.05); border-left: 3px solid var(--palm-green); padding: 12px 15px; border-radius: 8px; font-size: 12px; color: var(--text-muted);">
-                ðŸŸ¢ Rota matches sales demand perfectly. Keep executing current staffing deployment models.
-            </div>
-        `;
-    }
-    
-    insightsFeed.innerHTML = insightsHTML;
-}
+
 
 // RENDER REVIEWS & SOCIALS TAB
 function renderReviewsTab() {
