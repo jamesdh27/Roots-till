@@ -1,0 +1,48 @@
+name: Automated Google Reviews Fetcher
+
+on:
+  schedule:
+    # Runs automatically every 3 days at midnight UTC to keep the feed fresh
+    - cron: '0 0 */3 * *'
+  workflow_dispatch:
+    # Allows you to manually trigger a refresh with a single click from the GitHub Actions tab
+
+jobs:
+  refresh-reviews:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v4
+
+    - name: Set Up Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Network Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Execute Live Review Extraction
+      env:
+        # Securely injects your private SerpApi key from GitHub Secrets into the script environment
+        SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+      run: |
+        python fetch_reviews.py
+
+    - name: Commit and Push Updated Review Feed
+      run: |
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        
+        # Only commit if the reviews data file has actually changed
+        if ! git diff --exit-code reviews_data.json; then
+          git add reviews_data.json
+          git commit -m "💬 Automated data sync: Updated guest review feed [Skip CI]"
+          git push
+        else
+          echo "No new guest reviews detected since the last cycle."
+        fi
