@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
     # Allows you to manually trigger a refresh with a single click from the GitHub Actions tab
 
+permissions:
+  contents: write
+
 jobs:
   refresh-reviews:
     runs-on: ubuntu-latest
@@ -14,6 +17,8 @@ jobs:
     steps:
     - name: Checkout Repository Code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set Up Python Environment
       uses: actions/setup-python@v5
@@ -33,9 +38,12 @@ jobs:
         python fetch_reviews.py
 
     - name: Commit and Push Updated Review Feed
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "actions@github.com"
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
         
         # Only commit if the reviews data file has actually changed
         if ! git diff --exit-code reviews_data.json; then
