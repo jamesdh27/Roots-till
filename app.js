@@ -36,9 +36,10 @@
         let GUEST_REVIEWS = [];
 
         /**
-         * Fetches the dynamic reviews harvested by our python automation routine.
+         * Asynchronously fetches the automated Google Reviews dataset
+         * and populates the global memory state for the UI layers.
          */
-        async function loadDynamicReviews() {
+        async function loadDynamicGuestReviews() {
             try {
                 const response = await fetch('reviews_data.json');
                 if (!response.ok) throw new Error('Reviews data asset missing or unreachable.');
@@ -53,50 +54,27 @@
                     });
                 }
                 
-                console.log("ðŸ’¬ Dynamic reviews successfully loaded:", GUEST_REVIEWS);
+                console.log("ðŸ’¬ Dynamic review feed successfully parsed:", GUEST_REVIEWS);
 
             } catch (error) {
-                console.warn("âš ï¸ Dynamic reviews fetch error. Using static fallbacks.", error);
+                console.error("âš ï¸ Review feed synchronization failure. Deploying static backup logs:", error);
+                // Hardcoded safety fallback array to prevent layout breakage if the JSON stream drops
                 GUEST_REVIEWS = [
                     {
                         author: "Sarah M.",
                         rating: 5,
                         source: "Google",
-                        date: "2026-06-12",
-                        text: "The jerk chicken was absolutely phenomenal! Fall-off-the-bone tender and packed with spice. Best Caribbean spot in Hull by far. Great reggae music too.",
+                        date: "Recently",
+                        text: "The jerk chicken was absolutely phenomenal! Fall-off-the-bone tender and packed with spice.",
                         tags: ["food", "service", "vibe"]
                     },
                     {
                         author: "David K.",
                         rating: 5,
                         source: "TripAdvisor",
-                        date: "2026-06-11",
-                        text: "Incredible Reggae Rum Punch! Tastes just like the Caribbean. Staff were super friendly and the cocktails are fantastic value. We will definitely be back.",
-                        tags: ["drinks", "service", "vibe"]
-                    },
-                    {
-                        author: "Liam T.",
-                        rating: 4,
-                        source: "Google",
-                        date: "2026-06-10",
-                        text: "Really delicious curried mutton and plantain. The cocktails are strong and tasty. It gets busy on weekends so service can be a bit slow, but worth the wait.",
-                        tags: ["food", "service", "drinks", "slow"]
-                    },
-                    {
-                        author: "Emma L.",
-                        rating: 5,
-                        source: "Google",
-                        date: "2026-06-08",
-                        text: "Amazing atmosphere! Love the tropical styling and the playlist is excellent. Red Stripe on draught is perfect. The Mac & Cheese balls are a must-try.",
-                        tags: ["vibe", "drinks", "food"]
-                    },
-                    {
-                        author: "Marcus J.",
-                        rating: 4,
-                        source: "TripAdvisor",
-                        date: "2026-06-05",
-                        text: "Great food and cocktails. Jerk pork wraps are very tasty. Larkins next door is cheaper for pints, but Roots has way better flavor and vibe.",
-                        tags: ["food", "value", "vibe"]
+                        date: "Recently",
+                        text: "Incredible Reggae Rum Punch! Tastes just like the Caribbean. Staff were super friendly.",
+                        tags: ["drinks", "service", "cocktails"]
                     }
                 ];
             }
@@ -329,7 +307,7 @@
         async function initDashboard() {
             fetchLiveHullWeather();
             await loadDynamicStreetIntelligence();
-            await loadDynamicReviews();
+            await loadDynamicGuestReviews();
 
             const syncStatus = document.getElementById('sync-status');
             const offlineAlert = document.getElementById('offline-alert');
@@ -513,8 +491,10 @@
                 // Update debug rows
                 if (debugRows) debugRows.textContent = salesData.length;
                 
-                // Refresh weather too
+                // Refresh weather, competitor pricing and guest reviews too
                 await fetchLiveHullWeather();
+                await loadDynamicStreetIntelligence();
+                await loadDynamicGuestReviews();
                 
                 // Render
                 processAndRender();
