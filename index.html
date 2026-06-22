@@ -1777,19 +1777,67 @@
 
 
         // Competitor menu items comparison dataset
-        const COMPETITOR_MENUS = [
-            { name: "Reggae Rum Punch", category: "Cocktails", roots: 9.75, larkins: 8.50, piper: 8.00, boardwalk: 9.50, xanadu: 10.75 },
-            { name: "Flamin Zombie", category: "Cocktails", roots: 10.00, larkins: 9.00, piper: 8.50, boardwalk: 10.00, xanadu: 11.50 },
-            { name: "Pina Colada", category: "Cocktails", roots: 9.75, larkins: 8.50, piper: 8.00, boardwalk: 9.50, xanadu: 10.25 },
-            { name: "Red Stripe Pint", category: "Draught Beer", roots: 6.50, larkins: 5.20, piper: 5.00, boardwalk: 5.80, xanadu: 6.20 },
-            { name: "Cruz Campo Pint", category: "Draught Beer", roots: 5.50, larkins: 4.80, piper: 4.50, boardwalk: 5.20, xanadu: 5.60 },
-            { name: "Corona Bottle", category: "Bottles", roots: 5.00, larkins: 4.20, piper: 4.00, boardwalk: 4.80, xanadu: 5.00 },
-            { name: "Trinidadian Jerk Chicken", category: "Mains", roots: 16.00, larkins: 13.50, piper: 12.00, boardwalk: 15.00, xanadu: null },
-            { name: "Mo Bay Chicken Curry", category: "Mains", roots: 17.00, larkins: 14.50, piper: 13.00, boardwalk: 15.50, xanadu: null },
-            { name: "Mac & Cheese Balls", category: "Lite Bites", roots: 8.00, larkins: 6.50, piper: 5.50, boardwalk: 7.50, xanadu: 8.50 },
-            { name: "Belly Pork Bites", category: "Lite Bites", roots: 8.00, larkins: 7.00, piper: 6.00, boardwalk: 7.50, xanadu: 9.00 },
-            { name: "Roots Diet Coke", category: "Soft Drinks", roots: 3.50, larkins: 3.00, piper: 2.80, boardwalk: 3.20, xanadu: 3.80 }
-        ];
+        let COMPETITOR_MENUS = [];
+
+        /**
+         * Fetches the automated street intelligence pricing data and transforms
+         * the venue-first JSON matrix back into flat benchmark rows.
+         */
+        async function loadDynamicStreetIntelligence() {
+            try {
+                const response = await fetch('street_data.json');
+                if (!response.ok) throw new Error('Street data asset missing or unreachable.');
+                
+                const scrapedData = await response.json();
+                
+                // Hardcoded baseline menu configuration mapping to match existing layout keys
+                const menuTemplate = [
+                    { name: "Reggae Rum Punch", category: "Cocktails", roots: 9.75, targetKey: "Rum Punch" },
+                    { name: "Flamin Zombie", category: "Cocktails", roots: 10.00, targetKey: "Zombie" },
+                    { name: "Pina Colada", category: "Cocktails", roots: 9.75, targetKey: "Pina Colada" },
+                    { name: "Red Stripe Pint", category: "Draught Beer", roots: 6.50, targetKey: "Red Stripe" },
+                    { name: "Cruz Campo Pint", category: "Draught Beer", roots: 5.50, targetKey: "Cruz Campo" },
+                    { name: "Corona Bottle", category: "Bottles", roots: 5.00, targetKey: "Corona" },
+                    { name: "Trinidadian Jerk Chicken", category: "Mains", roots: 16.00, targetKey: "Jerk Chicken" },
+                    { name: "Mo Bay Chicken Curry", category: "Mains", roots: 17.00, targetKey: "Curry Chicken" },
+                    { name: "Mac & Cheese Balls", category: "Lite Bites", roots: 8.00, targetKey: "Mac & Cheese" },
+                    { name: "Belly Pork Bites", category: "Lite Bites", roots: 8.00, targetKey: "Belly Pork" },
+                    { name: "Roots Diet Coke", category: "Soft Drinks", roots: 3.50, targetKey: "Diet Coke" }
+                ];
+
+                // Remap venue-first scraped object variables back to tabular metrics
+                COMPETITOR_MENUS = menuTemplate.map(item => {
+                    return {
+                        name: item.name,
+                        category: item.category,
+                        roots: item.roots,
+                        larkins: scrapedData["The Larkins"]?.[item.targetKey] || null,
+                        piper: scrapedData["The Piper"]?.[item.targetKey] || null,
+                        boardwalk: scrapedData["Boardwalk"]?.[item.targetKey] || null,
+                        xanadu: scrapedData["Xanadu Lounge"]?.[item.targetKey] || null
+                    };
+                });
+
+                console.log("📊 Dynamic street matrix successfully parsed:", COMPETITOR_MENUS);
+
+            } catch (error) {
+                console.warn("⚠️ Automated feed error. Initializing static hardcoded fail-safes.", error);
+                // Fallback array declaration to prevent layout breakage if scraper fails
+                COMPETITOR_MENUS = [
+                    { name: "Reggae Rum Punch", category: "Cocktails", roots: 9.75, larkins: 8.50, piper: 8.00, boardwalk: 9.50, xanadu: 10.75 },
+                    { name: "Flamin Zombie", category: "Cocktails", roots: 10.00, larkins: 9.00, piper: 8.50, boardwalk: 10.00, xanadu: 11.50 },
+                    { name: "Pina Colada", category: "Cocktails", roots: 9.75, larkins: 8.50, piper: 8.00, boardwalk: 9.50, xanadu: 10.25 },
+                    { name: "Red Stripe Pint", category: "Draught Beer", roots: 6.50, larkins: 5.20, piper: 5.00, boardwalk: 5.80, xanadu: 6.20 },
+                    { name: "Cruz Campo Pint", category: "Draught Beer", roots: 5.50, larkins: 4.80, piper: 4.50, boardwalk: 5.20, xanadu: 5.60 },
+                    { name: "Corona Bottle", category: "Bottles", roots: 5.00, larkins: 4.20, piper: 4.00, boardwalk: 4.80, xanadu: 5.00 },
+                    { name: "Trinidadian Jerk Chicken", category: "Mains", roots: 16.00, larkins: 13.50, piper: 12.00, boardwalk: 15.00, xanadu: null },
+                    { name: "Mo Bay Chicken Curry", category: "Mains", roots: 17.00, larkins: 14.50, piper: 13.00, boardwalk: 15.50, xanadu: null },
+                    { name: "Mac & Cheese Balls", category: "Lite Bites", roots: 8.00, larkins: 6.50, piper: 5.50, boardwalk: 7.50, xanadu: 8.50 },
+                    { name: "Belly Pork Bites", category: "Lite Bites", roots: 8.00, larkins: 7.00, piper: 6.00, boardwalk: 7.50, xanadu: 9.00 },
+                    { name: "Roots Diet Coke", category: "Soft Drinks", roots: 3.50, larkins: 3.00, piper: 2.80, boardwalk: 3.20, xanadu: 3.80 }
+                ];
+            }
+        }
 
         // Competitor active street offers feed
         const COMPETITOR_OFFERS = [
@@ -1942,6 +1990,7 @@
         // ==========================================
         async function initDashboard() {
             fetchLiveHullWeather();
+            await loadDynamicStreetIntelligence();
 
             const syncStatus = document.getElementById('sync-status');
             const offlineAlert = document.getElementById('offline-alert');

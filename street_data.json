@@ -1,0 +1,54 @@
+{
+    "The Larkins": {
+        "Rum Punch": 8.50,
+        "Zombie": 9.00,
+        "Pina Colada": 8.50,
+        "Red Stripe": 5.20,
+        "Cruz Campo": 4.80,
+        "Corona": 4.20,
+        "Jerk Chicken": 13.50,
+        "Curry Chicken": 14.50,
+        "Mac & Cheese": 6.50,
+        "Belly Pork": 7.00,
+        "Diet Coke": 3.00
+    },
+    "The Piper": {
+        "Rum Punch": 8.00,
+        "Zombie": 8.50,
+        "Pina Colada": 8.00,
+        "Red Stripe": 5.00,
+        "Cruz Campo": 4.50,
+        "Corona": 4.00,
+        "Jerk Chicken": 12.00,
+        "Curry Chicken": 13.00,
+        "Mac & Cheese": 5.50,
+        "Belly Pork": 6.00,
+        "Diet Coke": 2.80
+    },
+    "Boardwalk": {
+        "Rum Punch": 9.50,
+        "Zombie": 10.00,
+        "Pina Colada": 9.50,
+        "Red Stripe": 5.80,
+        "Cruz Campo": 5.20,
+        "Corona": 4.80,
+        "Jerk Chicken": 15.00,
+        "Curry Chicken": 15.50,
+        "Mac & Cheese": 7.50,
+        "Belly Pork": 7.50,
+        "Diet Coke": 3.20
+    },
+    "Xanadu Lounge": {
+        "Rum Punch": 10.75,
+        "Zombie": 11.50,
+        "Pina Colada": 10.25,
+        "Red Stripe": 6.20,
+        "Cruz Campo": 5.60,
+        "Corona": 5.00,
+        "Jerk Chicken": null,
+        "Curry Chicken": null,
+        "Mac & Cheese": 8.50,
+        "Belly Pork": 9.00,
+        "Diet Coke": 3.80
+    }
+}
