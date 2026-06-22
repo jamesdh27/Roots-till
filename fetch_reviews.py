@@ -39,7 +39,7 @@ def fetch_live_reviews():
             "engine": "google_maps_reviews",
             "data_id": data_id,
             "api_key": SERPAPI_KEY,
-            "sort_by": "newest"
+            "sort_by": "newestFirst"
         }
         
         review_res = requests.get(search_url, params=review_params)
