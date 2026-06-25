@@ -1,42 +1,87 @@
 [
     {
-        "author": "Sarah M.",
+        "author": "Ethan Dawn",
         "rating": 5,
         "source": "Google",
-        "date": "2026-06-12",
-        "text": "The jerk chicken was absolutely phenomenal! Fall-off-the-bone tender and packed with spice. Best Caribbean spot in Hull by far. Great reggae music too.",
-        "tags": ["food", "service", "vibe"]
+        "date": "2 days ago",
+        "text": "Left a rating only.",
+        "tags": [
+            "vibe"
+        ]
     },
     {
-        "author": "David K.",
+        "author": "mandy cooper",
         "rating": 5,
-        "source": "TripAdvisor",
-        "date": "2026-06-11",
-        "text": "Incredible Reggae Rum Punch! Tastes just like the Caribbean. Staff were super friendly and the cocktails are fantastic value. We will definitely be back.",
-        "tags": ["drinks", "service", "vibe"]
+        "source": "Google",
+        "date": "a week ago",
+        "text": "Can't fault this place except our starter turned up with our main coarse, we were rushing with our starter so our main coarse didn't go cold, the food was amazing but would have been so much better if we had the break before starter n main!!!!",
+        "tags": [
+            "food"
+        ]
     },
     {
-        "author": "Liam T.",
+        "author": "Md. Mamoon Al Bashir",
+        "rating": 5,
+        "source": "Google",
+        "date": "a week ago",
+        "text": "Left a rating only.",
+        "tags": [
+            "vibe"
+        ]
+    },
+    {
+        "author": "lal shah",
+        "rating": 5,
+        "source": "Google",
+        "date": "2 weeks ago",
+        "text": "Left a rating only.",
+        "tags": [
+            "vibe"
+        ]
+    },
+    {
+        "author": "Jack Percival",
+        "rating": 5,
+        "source": "Google",
+        "date": "3 weeks ago",
+        "text": "Excellent food we went on a Tuesday and had the deal for two a huge amount of food for a reasonable price the cocktails were great too, couldn't fault the service at all brought multiple sauces with the cutlery and checked in often if we needed anything",
+        "tags": [
+            "food",
+            "drinks",
+            "service",
+            "value"
+        ]
+    },
+    {
+        "author": "D4rk S3ctor",
+        "rating": 1,
+        "source": "Google",
+        "date": "4 weeks ago",
+        "text": "Goat curry not worth it more bone than meat paid £18 not happy 👎🏻",
+        "tags": [
+            "food"
+        ]
+    },
+    {
+        "author": "Eve Mwaura",
+        "rating": 5,
+        "source": "Google",
+        "date": "Edited 4 weeks ago",
+        "text": "I went to roots when it first opened pre covid, years ago! And going back now, it's just gotten better. Lovely atmosphere, beautiful food, presented stunningly. The atmosphere is chilled, and open to any occasion. Took my kids (17 year old twins) and it was simply perfect. My son had the lamb chops, my pescetarian daughter had the shrimp, and as I eat small amounts (bariatric surgery 6 years ago) I ordered from the small bites menu and was stuffed! Highly recommended, perfect for a midweek chill out meal, or a weekend night out.",
+        "tags": [
+            "food",
+            "vibe"
+        ]
+    },
+    {
+        "author": "Mark Abthorpe",
         "rating": 4,
         "source": "Google",
-        "date": "2026-06-10",
-        "text": "Really delicious curried mutton and plantain. The cocktails are strong and tasty. It gets busy on weekends so service can be a bit slow, but worth the wait.",
-        "tags": ["food", "service", "drinks", "slow"]
-    },
-    {
-        "author": "Emma L.",
-        "rating": 5,
-        "source": "Google",
-        "date": "2026-06-08",
-        "text": "Amazing atmosphere! Love the tropical styling and the playlist is excellent. Red Stripe on draught is perfect. The Mac & Cheese balls are a must-try.",
-        "tags": ["vibe", "drinks", "food"]
-    },
-    {
-        "author": "Marcus J.",
-        "rating": 4,
-        "source": "TripAdvisor",
-        "date": "2026-06-05",
-        "text": "Great food and cocktails. Jerk pork wraps are very tasty. Larkins next door is cheaper for pints, but Roots has way better flavor and vibe.",
-        "tags": ["food", "value", "vibe"]
+        "date": "4 weeks ago",
+        "text": "Enjoyed the Curry Goat (go easy as it contains bones but tasty and well worth the effort. The Cocktails were great too especially the Flaming Zombie",
+        "tags": [
+            "food",
+            "drinks"
+        ]
     }
 ]
