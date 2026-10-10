@@ -1,9 +1,22 @@
 [
     {
+        "author": "itssbey",
+        "rating": 5,
+        "source": "Google",
+        "date": "2 days ago",
+        "text": "Service is great and the food was very nice, lovely atmosphere. It was nice to taste a sweet version of Jamaican food, cocktails were really good as well.",
+        "tags": [
+            "food",
+            "drinks",
+            "service",
+            "vibe"
+        ]
+    },
+    {
         "author": "Last Last",
         "rating": 1,
         "source": "Google",
-        "date": "4 days ago",
+        "date": "a week ago",
         "text": "We were optimistic, the service and atmosphere seemed welcoming, friendly and the food served to other customers was looking good. Just personal preference, we decided to takeaway but turned out to be a hassle. Paid close to £50, ordered 2 starters, 2 mains with sides. Unfortunately discovered one of our sides were missing after taking it away and that just set the tone. I don't understand how a kitchen allows a curry to leave without a side of rice? I think this is a case of a restaurant that doesn't typically do takeout and needs to rethink the offering or stop offering it as an option which is why I'm offering feedback. What we got was 3 large and 2 small card boxes. In one large was a very small burger (the size of a McDonald's double cheeseburger) so that was disappointing, in another large was a curry which again wasn't generous and who puts curry on its own in a card box? Wasn't doing it any favours for presentation, please get some plastic takeout boxes. In the last large box was the chicken wings, probably the best part. In one of the small boxes was the chips, these were good and in the last small box was the belly pork bites. Not really cut small enough to be bites, taste was good but one was burnt and only 3? It looked to me like 1 and half pork belly slices. If you want to leave feeling satisfied, spend maybe at least £50 each. Almost forgot, ordered 2 fruit juice drinks while waiting which were room temperature and used the fill the glass full of ice trick... not impressed and not difficult to keep some cartons in a fridge is it. So when I called about the missing rice I was asked how far away are you? I'll give you a refund next time you're in then. No mention of remote refund, didn't believe I'd ever get it back if I didn't return so went back. Tried refunding in cash at first which seemed odd since I paid by card then when he put through a refund through yeti pay it didn't even give me a receipt for the refund. So yet to see if that even goes through and after he did it and I'd driven back, only then does he mention oh I could have done that over the phone. By the way, I was with a Jamaican and he said it didn't taste Caribbean. So overall, disappointing takeout presentation, portions and service regarding refund, when things go wrong they don't care enough to go out of their way to make it right. I would have offered more than just a refund for the missing rice because it ruined the meal, knock the drinks off or something to make up for it. The way it's currently being run, I'd give this one a miss. Too many problems for it be a one off, this is by design, minimum cost and lame cost cutting tactics for maximum profit and poor service when they make a mistake.",
         "tags": [
             "food",
@@ -16,7 +29,7 @@
         "author": "Hyouten",
         "rating": 5,
         "source": "Google",
-        "date": "2 weeks ago",
+        "date": "3 weeks ago",
         "text": "Delicious food, lovely staff, and immaculate vibes. Wonderful overall. Can't wait to go back again.",
         "tags": [
             "food",
@@ -28,7 +41,7 @@
         "author": "Neil Sandars",
         "rating": 4,
         "source": "Google",
-        "date": "2 weeks ago",
+        "date": "3 weeks ago",
         "text": "Left a rating only.",
         "tags": [
             "vibe"
@@ -45,51 +58,6 @@
             "drinks",
             "vibe",
             "value"
-        ]
-    },
-    {
-        "author": "Andy Eastburn",
-        "rating": 5,
-        "source": "Google",
-        "date": "3 weeks ago",
-        "text": "Great food, great value ( at half price) and half decent dad jokes thrown in for free by the staff !! Highly recommend ...",
-        "tags": [
-            "food",
-            "service",
-            "value"
-        ]
-    },
-    {
-        "author": "Matthew Thornton",
-        "rating": 5,
-        "source": "Google",
-        "date": "4 weeks ago",
-        "text": "Left a rating only.",
-        "tags": [
-            "vibe"
-        ]
-    },
-    {
-        "author": "andrew spencer",
-        "rating": 5,
-        "source": "Google",
-        "date": "a month ago",
-        "text": "Had a great night here with friends, excellent food & drink & great service",
-        "tags": [
-            "food",
-            "drinks",
-            "service"
-        ]
-    },
-    {
-        "author": "David Blair",
-        "rating": 5,
-        "source": "Google",
-        "date": "a month ago",
-        "text": "Always tried to pop in here if I hull and nearby great food and service.",
-        "tags": [
-            "food",
-            "service"
         ]
     }
 ]
