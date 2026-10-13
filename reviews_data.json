@@ -1,9 +1,21 @@
 [
     {
+        "author": "Eyo Moma",
+        "rating": 5,
+        "source": "Google",
+        "date": "a day ago",
+        "text": "Truly exceptional service. The seamless fussion of Afro-Carribean vibes, music, food and ambience makes the experience worth your while! 💯🔥",
+        "tags": [
+            "food",
+            "service",
+            "vibe"
+        ]
+    },
+    {
         "author": "itssbey",
         "rating": 5,
         "source": "Google",
-        "date": "2 days ago",
+        "date": "5 days ago",
         "text": "Service is great and the food was very nice, lovely atmosphere. It was nice to taste a sweet version of Jamaican food, cocktails were really good as well.",
         "tags": [
             "food",
@@ -45,19 +57,6 @@
         "text": "Left a rating only.",
         "tags": [
             "vibe"
-        ]
-    },
-    {
-        "author": "Mike Cosgrove",
-        "rating": 5,
-        "source": "Google",
-        "date": "3 weeks ago",
-        "text": "Belting food, decent prices. Various deals on week nights. Banging cocktails. Good beer. Decent music. What more do you want, highly recommended 👌🏼",
-        "tags": [
-            "food",
-            "drinks",
-            "vibe",
-            "value"
         ]
     }
 ]
