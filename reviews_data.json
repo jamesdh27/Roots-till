@@ -1,5 +1,15 @@
 [
     {
+        "author": "Chris Moore",
+        "rating": 5,
+        "source": "Google",
+        "date": "5 hours ago",
+        "text": "Left a rating only.",
+        "tags": [
+            "vibe"
+        ]
+    },
+    {
         "author": "Francesca",
         "rating": 5,
         "source": "Google",
@@ -43,18 +53,6 @@
         "tags": [
             "food",
             "drinks",
-            "service",
-            "vibe"
-        ]
-    },
-    {
-        "author": "Hyouten",
-        "rating": 5,
-        "source": "Google",
-        "date": "a month ago",
-        "text": "Delicious food, lovely staff, and immaculate vibes. Wonderful overall. Can't wait to go back again.",
-        "tags": [
-            "food",
             "service",
             "vibe"
         ]
