@@ -1,9 +1,23 @@
 [
     {
+        "author": "molly fearnley",
+        "rating": 5,
+        "source": "Google",
+        "date": "2 days ago",
+        "text": "Amazing food here with perfect portion sizes. Greeted by friendly knowledgeable staff. They have a great menu with a wide variety of drinks aswell.\nAll reasonably priced.\nA nice atmosphere with proper reggae music. Will definitely return",
+        "tags": [
+            "food",
+            "drinks",
+            "service",
+            "vibe",
+            "value"
+        ]
+    },
+    {
         "author": "Jon Hillyard",
         "rating": 5,
         "source": "Google",
-        "date": "a day ago",
+        "date": "4 days ago",
         "text": "Came on Monday, wasn't too busy but the bar tender H was very accommodating and had us drinking very ch so drinks. The music was good and also the vibes. Would return on a more busier day",
         "tags": [
             "drinks",
@@ -25,7 +39,7 @@
         "author": "Smiley Riley",
         "rating": 5,
         "source": "Google",
-        "date": "a week ago",
+        "date": "2 weeks ago",
         "text": "Riz is amazing, great drinks and prices, lovely atmosphere too, outside space is lovely too with heaters.",
         "tags": [
             "drinks",
@@ -37,7 +51,7 @@
         "author": "Tom Garforth",
         "rating": 5,
         "source": "Google",
-        "date": "a week ago",
+        "date": "2 weeks ago",
         "text": "Riz and Hamza served us excellently, great customer service and atmosphere",
         "tags": [
             "service",
@@ -48,7 +62,7 @@
         "author": "Etihadair Maude",
         "rating": 5,
         "source": "Google",
-        "date": "a week ago",
+        "date": "2 weeks ago",
         "text": "excellent service, Riz, Hamza serve the best pints ever",
         "tags": [
             "drinks",
@@ -93,16 +107,6 @@
         "source": "Google",
         "date": "3 weeks ago",
         "text": "Had Sunday carvery delivered, it was beautiful.  So tasty and filling.\nWill definitely be ordering again.",
-        "tags": [
-            "vibe"
-        ]
-    },
-    {
-        "author": "Chris Moore",
-        "rating": 5,
-        "source": "Google",
-        "date": "3 weeks ago",
-        "text": "Left a rating only.",
         "tags": [
             "vibe"
         ]
